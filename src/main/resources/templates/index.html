@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout}">
+<head>
+    <title>Home</title>
+</head>
+<body layout:fragment="content">
+<h2>Welcome</h2>
+<p class="test">Spring Security Thymeleaf tutorial</p>
+<div sec:authorize="hasRole('USER')">Text visible to user.</div>
+<div sec:authorize="hasRole('ADMIN')">Text visible to admin.</div>
+<div sec:authorize="isAuthenticated()">
+    Text visible only to authenticated users.
+    <h3>Authenticated username:</h3>
+    <div sec:authentication="name"></div>
+    <h3>Authenticated user roles:</h3>
+    <div sec:authentication="principal.authorities"></div>
+</div>
+<div sec:authorize="isAnonymous()">
+    <a th:href="@{/login}" class="btn btn-success">Login</a>
+</div>
+</body>
+</html>

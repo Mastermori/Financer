@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout}">
+<head>
+    <title>Dashboard</title>
+    <!--    <style>-->
+    <!--        table {-->
+    <!--          font-family: arial, sans-serif;-->
+    <!--          border-collapse: collapse;-->
+    <!--          width: 60%;-->
+    <!--        }-->
+
+    <!--        td, th {-->
+    <!--          border: 1px solid #bbbbbb;-->
+    <!--          text-align: left;-->
+    <!--          padding: 8px;-->
+    <!--        }-->
+
+    <!--        tr:nth-child(even) {-->
+    <!--          background-color: #dddddd;-->
+    <!--        }-->
+    <!--    </style>-->
+</head>
+<body layout:fragment="content">
+<h2>Transactions</h2>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">Description</th>
+        <th scope="col">Amount</th>
+        <th scope="col">Transaction Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="transaction: ${transactions}">
+        <td th:text="${transaction.description}">Description</td>
+        <td th:text="${transaction.getFormattedAmount()}">Amount</td>
+        <td th:text="${#temporals.format(transaction.transactionDate, 'dd.MM.yy')}">Transaction Date</td>
+    </tr>
+    </tbody>
+</table>
+<!--<ol th:each="transaction: ${transactions}">-->
+<!--    <li th:text="${transaction.description}">Description</li>-->
+<!--    <li th:text="${transaction.getFormattedAmount()}">Amount</li>-->
+<!--</ol>-->
+
+<h3>Filter</h3>
+<form method="get">
+    <label>
+        <input type="text" name="transactionFilter" th:value="${filter}">
+    </label>
+    <input type="submit">
+</form>
+<h3>Create Transaction</h3>
+<form method="post" th:object="${newTransaction}">
+    <label>
+        <input type="text" name="description" th:field="*{description}">
+        <input type="text" name="amount" th:field="*{amount}">
+        <input type="text" name="transactionDate" th:field="*{transactionDate}">
+    </label>
+    <input type="submit">
+</form>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="UTF-8">
+
+    <base th:href="@{/}">
+    <!--    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">-->
+
+    <!-- Bootstrap CSS -->
+    <!--    <link rel="stylesheet" th:href="@{/css/all.min.css}">-->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+
+    <!--  Each token will be replaced by their respective titles in the resulting page. -->
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Financer</title>
+
+</head>
+<body>
+<!-- Navbar -->
+<!--<div class="d-flex flex-column" style="height: 100vh;">-->
+<!--    <header class="sticky-top">-->
+<!--        <div class="bg-primary">-->
+<!--            <nav th:replace="~{grundbausteine/layout/navbar-fragment :: navbar}"></nav>-->
+<!--        </div>-->
+<!--        <div th:replace="~{grundbausteine/layout/submission-alert-fragment :: submission-alert}"></div>-->
+<!--        <div th:replace="~{grundbausteine/layout/kleinauftrag-alert-fragment :: kleinauftrag-alert}"></div>-->
+<!--    </header>-->
+
+<!-- Content -->
+<div class="container py-3 pt-lg-4">
+    <div layout:fragment="content"></div>
+</div>
+
+<!-- Footer -->
+<!--    <footer th:replace="~{grundbausteine/layout/footer-fragment :: footer}"></footer>-->
+<!--</div>-->
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+</body>
+</html>
