@@ -6,20 +6,18 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 
@@ -27,21 +25,30 @@ import java.io.IOException;
 @EnableWebSecurity
 public class MainSecurityConfig {
 
-    @Bean
-    public InMemoryUserDetailsManager userDetailsManager() {
-        UserDetails user1 = User.withUsername("user1")
-                .password(passwordEncoder().encode("user1"))
-                .roles("USER")
-                .build();
-        UserDetails user2 = User.withUsername("user2")
-                .password(passwordEncoder().encode("user2"))
-                .roles("USER")
-                .build();
-        UserDetails admin = User.withUsername("admin")
-                .password(passwordEncoder().encode("admin"))
-                .roles("ADMIN")
-                .build();
-        return new InMemoryUserDetailsManager(user1, user2, admin);
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+//    @Bean
+//    public InMemoryUserDetailsManager userDetailsManager() {
+//        UserDetails user1 = User.withUsername("user1")
+//                .password(passwordEncoder().encode("user1"))
+//                .roles("USER")
+//                .build();
+//        UserDetails user2 = User.withUsername("user2")
+//                .password(passwordEncoder().encode("user2"))
+//                .roles("USER")
+//                .build();
+//        UserDetails admin = User.withUsername("admin")
+//                .password(passwordEncoder().encode("admin"))
+//                .roles("ADMIN")
+//                .build();
+//        return new InMemoryUserDetailsManager(user1, user2, admin);
+//    }
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .userDetailsService(userDetailsService);
     }
 
     @Bean
@@ -68,10 +75,10 @@ public class MainSecurityConfig {
                         .authenticated()
                 )
                 .formLogin((login) -> login
-                                .defaultSuccessUrl("/dashboard", true)
+                        .defaultSuccessUrl("/dashboard", true)
                 )
                 .logout((logout) -> logout
-                                .logoutSuccessUrl("/")
+                        .logoutSuccessUrl("/")
                 );
         return http.build();
     }
