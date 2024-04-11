@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 @Service
 public class TransactionService {
@@ -27,7 +26,7 @@ public class TransactionService {
     }
 
     public List<Transaction> getTransactions() {
-        return StreamSupport.stream(transactions.findAll().spliterator(), false).toList();
+        return transactions.findAll();
     }
 
     public List<Transaction> filterTransactions(@NonNull String filterText) {
