@@ -1,21 +1,31 @@
 <nav class="navbar navbar-expand-lg" th:fragment="navbar (activeTab)">
     <div class="container-fluid">
-        <button aria-controls="offcanvasNavbar" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#offcanvasNavbar"
+        <button aria-controls="offcanvasNavbar" aria-label="Toggle navigation" class="navbar-toggler"
+                data-bs-target="#offcanvasNavbar"
                 data-bs-toggle="offcanvas" type="button">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div aria-labelledby="offcanvasNavbarLabel" class="offcanvas offcanvas-start" id="offcanvasNavbar" tabindex="-1" data-bs-hideresize="true">
+        <div aria-labelledby="offcanvasNavbarLabel" class="offcanvas offcanvas-start" data-bs-hideresize="true"
+             id="offcanvasNavbar"
+             tabindex="-1">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Financer</h5>
-                <button aria-label="Close" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" type="button"></button>
+                <button aria-label="Close" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        type="button"></button>
             </div>
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
                     <li class="nav-item">
-                        <a th:aria-current="${activeTab == 'home' ? 'page' : ''}" th:classappend="${activeTab == 'home' ? 'active':''}" class="nav-link" th:href="@{/}">Home</a>
+                        <a class="nav-link"
+                           th:aria-current="${activeTab == 'home' ? 'page' : ''}"
+                           th:classappend="${activeTab == 'home' ? 'active':''}"
+                           th:href="@{/}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a th:aria-current="${activeTab == 'dashboard' ? 'page' : ''}" th:classappend="${activeTab == 'dashboard' ? 'active':''}" class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+                        <a class="nav-link"
+                           th:aria-current="${activeTab == 'dashboard' ? 'page' : ''}"
+                           th:classappend="${activeTab == 'dashboard' ? 'active':''}"
+                           th:href="@{/dashboard}">Dashboard</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
@@ -33,54 +43,27 @@
                     </li>
                 </ul>
                 <div class="d-flex">
-                    <button class="btn btn-outline-success">Toggle Theme</button>
+                    <div class="btn btn-secondary" id="themeToggleButton">
+                        <i class="fa-solid fa-circle-half-stroke fa-flip-horizontal" id="themeToggleDisplayIcon"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        var darkTheme = false;
+        $(document).ready( function() {
+            darkTheme = document.documentElement.getAttribute("data-bs-theme") == "dark";
+            $('#themeToggleButton').click(function(){
+                console.log("Test success");
+                darkTheme = !darkTheme;
+                document.documentElement.setAttribute("data-bs-theme", darkTheme ? "dark" : "");
+                var icon = $('#themeToggleDisplayIcon')[0];
+                icon.classList.remove("fa-flip-horizontal");
+                if (darkTheme) {
+                    icon.classList.add("fa-flip-horizontal");
+                }
+            });
+        });
+    </script>
 </nav>
-
-
-<!--<nav class="navbar bg-body-tertiary fixed-top">-->
-<!--    <div class="container-fluid">-->
-<!--        <a class="navbar-brand" href="#">Offcanvas navbar</a>-->
-<!--        <button aria-controls="offcanvasNavbar" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#offcanvasNavbar"-->
-<!--                data-bs-toggle="offcanvas" type="button">-->
-<!--            <span class="navbar-toggler-icon"></span>-->
-<!--        </button>-->
-<!--        <div aria-labelledby="offcanvasNavbarLabel" class="offcanvas offcanvas-end" id="offcanvasNavbar" tabindex="-1">-->
-<!--            <div class="offcanvas-header">-->
-<!--                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Offcanvas</h5>-->
-<!--                <button aria-label="Close" class="btn-close" data-bs-dismiss="offcanvas" type="button"></button>-->
-<!--            </div>-->
-<!--            <div class="offcanvas-body">-->
-<!--                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">-->
-<!--                    <li class="nav-item">-->
-<!--                        <a aria-current="page" class="nav-link active" href="#">Home</a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item">-->
-<!--                        <a class="nav-link" href="#">Link</a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item dropdown">-->
-<!--                        <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"-->
-<!--                           role="button">-->
-<!--                            Dropdown-->
-<!--                        </a>-->
-<!--                        <ul class="dropdown-menu">-->
-<!--                            <li><a class="dropdown-item" href="#">Action</a></li>-->
-<!--                            <li><a class="dropdown-item" href="#">Another action</a></li>-->
-<!--                            <li>-->
-<!--                                <hr class="dropdown-divider">-->
-<!--                            </li>-->
-<!--                            <li><a class="dropdown-item" href="#">Something else here</a></li>-->
-<!--                        </ul>-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--                <form class="d-flex mt-3" role="search">-->
-<!--                    <input aria-label="Search" class="form-control me-2" placeholder="Search" type="search">-->
-<!--                    <button class="btn btn-outline-success" type="submit">Search</button>-->
-<!--                </form>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</nav>-->
