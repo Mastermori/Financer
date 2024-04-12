@@ -67,7 +67,7 @@ public class MainSecurityConfig {
                         .hasRole("ADMIN")
                         .requestMatchers("/login", "/register")
                         .permitAll() // doesn't work as login filter is higher. (https://twin.sh/articles/21/spring-security-prevent-authenticated-users-from-accessing-login-page)
-                        .requestMatchers("/css/**", "/js/**", "/favicon.ico")
+                        .requestMatchers("/css/**", "/js/**", "/webfonts/**", "/favicon.ico")
                         .permitAll()
                         .requestMatchers("/")
                         .permitAll()
