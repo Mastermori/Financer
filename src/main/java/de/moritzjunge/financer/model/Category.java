@@ -18,6 +18,7 @@ public class Category {
 
     private Color color;
     private String description;
+    private CategoryIcon icon = CategoryIcon.SHOPPING_CART;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "householdId", nullable = false)
     private Household household;
@@ -37,6 +38,10 @@ public class Category {
 
     public Color getColor() {
         return color;
+    }
+
+    public String getCssColor() {
+        return "#" + Integer.toHexString(color.getRGB()).substring(2);
     }
 
     public Category setColor(Color color) {
@@ -59,6 +64,15 @@ public class Category {
 
     public Category setHousehold(Household household) {
         this.household = household;
+        return this;
+    }
+
+    public CategoryIcon getIcon() {
+        return icon;
+    }
+
+    public Category setIcon(CategoryIcon icon) {
+        this.icon = icon;
         return this;
     }
 }

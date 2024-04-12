@@ -22,95 +22,81 @@
     <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.3/b-3.0.1/b-colvis-3.0.1/b-print-3.0.1/date-1.5.2/fc-5.0.0/fh-4.0.1/sl-2.0.0/datatables.min.css"
           rel="stylesheet">
 </head>
+<div layout:fragment="navbar">
+    <div th:replace="~{fragments/navigation-fragment.html :: navbar (activeTab = dashboard)}"></div>
+</div>
 <body layout:fragment="content">
 <h2>Transactions</h2>
-<table class="table table-striped" id="transactions">
-    <!--    <caption>Transactions</caption>-->
-    <thead>
-    <tr>
-        <th scope="col">Transaction Date</th>
-        <th scope="col">Amount</th>
-        <th scope="col">Description</th>
-        <th scope="col">Category</th>
-        <th scope="col">Household</th>
-        <th scope="col">Payed by</th>
-        <th scope="col">Created by</th>
-    </tr>
-    </thead>
-    <tbody class="table-group-divider">
-    <tr th:each="transaction: ${transactions}">
-        <td th:text="${#temporals.format(transaction.transactionDate, 'dd.MM.yy')}">Transaction Date</td>
-        <td th:text="${transaction.getFormattedAmount()}">Amount</td>
-        <td th:text="${transaction.description}">Description</td>
-        <!--        <td th:text="${transaction.transactionDate}">Transaction Date</td>-->
-        <!--        <td>12.03.2001</td>-->
-        <td th:text="${transaction.category.description}">Category</td>
-        <td th:text="${transaction.household.name}">Household</td>
-        <td th:text="${transaction.payer.name}">Payer</td>
-        <td th:text="${transaction.owner.name}">Creator</td>
-    </tr>
-    </tbody>
-</table>
+<!--Only visible on small screens: -->
+<div class="d-inline d-md-none">
+    <div th:if="${transactions.isEmpty()}" class="mb-3">
+        <div class="text-muted">No transactions added yet.</div>
+    </div>
+    <div class="card mb-2 mt-2" th:each="transaction: ${transactions}" th:style="|--bs-card-border-color: ${transaction.category.getCssColor()}|">
+        <!--        <h5 class="card-header" th:text="${transaction.category.description}"></h5>-->
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-1">
+                    <i class="bi bi-circle"></i>
+                    <i th:class="|h1 fa-solid ${transaction.category.icon.cssClass}|" th:style="|color: ${transaction.category.getCssColor()}|"></i>
+                </div>
+                <div class="col-8">
+                    <h5 class="card-title" th:text="${transaction.category.description}"></h5>
+                    <p class="card-text fst-italic" th:text="${transaction.description}"></p>
+                </div>
+                <div class="col-3 text-end">
+                    <p class="card-title" th:text="${transaction.getFormattedAmount()}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            <div class="row">
+                <div class="col-6 text-start"
+                     th:text="${#temporals.format(transaction.transactionDate, 'dd.MM.yy')}"></div>
+                <div class="col-6 text-end" th:text="|Payed by ${transaction.payer.name}|"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Only visible on large screens: -->
+<div class="d-none d-lg-inline">
+    <table class="table table-striped" id="transactions">
+        <!--    <caption>Transactions</caption>-->
+        <thead>
+        <tr>
+            <th scope="col">Transaction Date</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">Household</th>
+            <th scope="col">Payed by</th>
+            <th scope="col">Created by</th>
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        <tr th:each="transaction: ${transactions}">
+            <td th:text="${#temporals.format(transaction.transactionDate, 'dd.MM.yy')}">Transaction Date</td>
+            <td th:text="${transaction.getFormattedAmount()}">Amount</td>
+            <td th:text="${transaction.description}">Description</td>
+            <td th:text="${transaction.category.description}">Category</td>
+            <td th:text="${transaction.household.name}">Household</td>
+            <td th:text="${transaction.payer.name}">Payer</td>
+            <td th:text="${transaction.owner.name}">Creator</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 <!--<ol th:each="transaction: ${transactions}">-->
 <!--    <li th:text="${transaction.description}">Description</li>-->
 <!--    <li th:text="${transaction.getFormattedAmount()}">Amount</li>-->
 <!--</ol>-->
 
 <h3>Create Transaction</h3>
-<div class="container">
-    <form class="row g-3" method="post" th:object="${newTransaction}">
-        <div class="col-12 col-lg-4">
-            <label class="form-label" for="inputAmount">Amount</label>
-            <input class="form-control" id="inputAmount" name="amount" th:field="*{amount}" type="text">
-            <p class="text-danger" th:errors="*{amount}"
-               th:if="${#fields.hasErrors('amount')}"></p>
-        </div>
-        <div class="col-12 col-lg-4">
-            <label class="form-label" for="inputDescription">Description</label>
-            <input class="form-control" id="inputDescription" name="description" th:field="*{description}" type="text">
-            <p class="text-danger" th:errors="*{description}"
-               th:if="${#fields.hasErrors('description')}"></p>
-        </div>
-        <div class="col-12 col-lg-4">
-            <label class="form-label" for="creation-date-picker">Date</label>
-            <input class="form-control" id="creation-date-picker" name="transactionDate" th:field="*{transactionDate}"
-                   type="text">
-            <p class="text-danger" th:errors="*{transactionDate}"
-               th:if="${#fields.hasErrors('transactionDate')}"></p>
-        </div>
-        <div class="col-12 col-lg-4">
-            <label class="form-label" for="inputCategory">Category</label>
-            <select class="form-control" id="inputCategory" name="category" th:field="*{categoryId}">
-                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.description}"></option>
-            </select>
-            <p class="text-danger" th:errors="*{categoryId}"
-               th:if="${#fields.hasErrors('categoryId')}"></p>
-        </div>
-        <div class="col-12 col-lg-4 col-md-6">
-            <label class="form-label" for="inputHousehold">Household</label>
-            <select class="form-control" id="inputHousehold" name="household" th:field="*{householdId}">
-                <option th:each="household : ${households}" th:value="${household.id}" th:text="${household.name}"></option>
-            </select>
-            <p class="text-danger" th:errors="*{householdId}"
-               th:if="${#fields.hasErrors('householdId')}"></p>
-        </div>
-        <div class="col-12 col-lg-4 col-md-6">
-            <label class="form-label" for="inputPayer">Payer</label>
-            <select class="form-control" id="inputPayer" name="payer" th:field="*{payerId}">
-                <option th:each="payer : ${possiblePayers}" th:value="${payer.id}" th:text="${payer.name}"></option>
-            </select>
-            <p class="text-danger" th:errors="*{payerId}"
-               th:if="${#fields.hasErrors('payerId')}"></p>
-        </div>
-        <input name="ownerId" th:value="*{ownerId}" type="hidden">
-        <div class="col-auto col-lg mx-auto">
-            <button class="btn btn-primary" type="submit">Create</button>
-        </div>
-    </form>
-</div>
+<div th:replace="~{fragments/create-transaction-fragment.html :: newTransactionForm (newTransaction = ${newTransaction}, categories = ${categories}, households = ${households}, possiblePayers = ${possiblePayers})}"></div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
 <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.3/b-3.0.1/b-colvis-3.0.1/b-print-3.0.1/date-1.5.2/fc-5.0.0/fh-4.0.1/sl-2.0.0/datatables.min.js"></script>
-
 <script type="text/javascript">
     $(document).ready( function () {
         DataTable.type('date', 'className', ' ');
