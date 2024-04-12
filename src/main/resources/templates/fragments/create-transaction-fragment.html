@@ -1,0 +1,53 @@
+<div class="container" th:fragment="newTransactionForm (newTransaction, categories, households, possiblePayers)">
+    <form class="row g-3" method="post" th:object="${newTransaction}">
+        <div class="col-12 col-lg-4">
+            <label class="form-label" for="inputAmount">Amount</label>
+            <input class="form-control" id="inputAmount" name="amount" th:field="*{amount}" type="text">
+            <p class="text-danger" th:errors="*{amount}"
+               th:if="${#fields.hasErrors('amount')}"></p>
+        </div>
+        <div class="col-12 col-lg-4">
+            <label class="form-label" for="inputDescription">Description</label>
+            <input class="form-control" id="inputDescription" name="description" th:field="*{description}" type="text">
+            <p class="text-danger" th:errors="*{description}"
+               th:if="${#fields.hasErrors('description')}"></p>
+        </div>
+        <div class="col-12 col-lg-4">
+            <label class="form-label" for="creation-date-picker">Date</label>
+            <input class="form-control" id="creation-date-picker" name="transactionDate" th:field="*{transactionDate}"
+                   type="text">
+            <p class="text-danger" th:errors="*{transactionDate}"
+               th:if="${#fields.hasErrors('transactionDate')}"></p>
+        </div>
+        <div class="col-12 col-lg-4">
+            <label class="form-label" for="inputCategory">Category</label>
+            <select class="form-control" id="inputCategory" name="category" th:field="*{categoryId}">
+                <option th:each="category : ${categories}" th:text="${category.description}"
+                        th:value="${category.id}"></option>
+            </select>
+            <p class="text-danger" th:errors="*{categoryId}"
+               th:if="${#fields.hasErrors('categoryId')}"></p>
+        </div>
+        <div class="col-12 col-lg-4 col-md-6">
+            <label class="form-label" for="inputHousehold">Household</label>
+            <select class="form-control" id="inputHousehold" name="household" th:field="*{householdId}">
+                <option th:each="household : ${households}" th:text="${household.name}"
+                        th:value="${household.id}"></option>
+            </select>
+            <p class="text-danger" th:errors="*{householdId}"
+               th:if="${#fields.hasErrors('householdId')}"></p>
+        </div>
+        <div class="col-12 col-lg-4 col-md-6">
+            <label class="form-label" for="inputPayer">Payer</label>
+            <select class="form-control" id="inputPayer" name="payer" th:field="*{payerId}">
+                <option th:each="payer : ${possiblePayers}" th:text="${payer.name}" th:value="${payer.id}"></option>
+            </select>
+            <p class="text-danger" th:errors="*{payerId}"
+               th:if="${#fields.hasErrors('payerId')}"></p>
+        </div>
+        <input name="ownerId" th:value="*{ownerId}" type="hidden">
+        <div class="col-auto col-lg mx-auto">
+            <button class="btn btn-primary" type="submit">Create</button>
+        </div>
+    </form>
+</div>

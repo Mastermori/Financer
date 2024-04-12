@@ -60,13 +60,14 @@ public class MainSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //noinspection Convert2MethodRef
         http
+                // Necessary to redirect from login. (https://twin.sh/articles/21/spring-security-prevent-authenticated-users-from-accessing-login-page)
                 .addFilterBefore(this::doFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf((csrf) -> csrf.disable())
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/admin/**")
                         .hasRole("ADMIN")
                         .requestMatchers("/login", "/register")
-                        .permitAll() // doesn't work as login filter is higher. (https://twin.sh/articles/21/spring-security-prevent-authenticated-users-from-accessing-login-page)
+                        .permitAll()
                         .requestMatchers("/css/**", "/js/**", "/webfonts/**", "/favicon.ico")
                         .permitAll()
                         .requestMatchers("/")
@@ -88,7 +89,7 @@ public class MainSecurityConfig {
                 && SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
                 && ((HttpServletRequest) request).getRequestURI().equals("/login")) {
 //                System.out.println("user is authenticated but trying to access login page, redirecting to /");
-            ((HttpServletResponse) response).sendRedirect("/");
+            ((HttpServletResponse) response).sendRedirect("/dashboard");
         }
         chain.doFilter(request, response);
     }
