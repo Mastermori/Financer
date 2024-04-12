@@ -15,7 +15,9 @@
     <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
     <link rel="stylesheet" th:href="@{/css/fontawesome.css}">
     <link rel="stylesheet" th:href="@{/css/all.css}">
-<!--    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.css}">-->
+    <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.3/b-3.0.1/b-colvis-3.0.1/b-print-3.0.1/date-1.5.2/fc-5.0.0/fh-4.0.1/sl-2.0.0/datatables.min.css"
+          rel="stylesheet">
+    <!--    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.css}">-->
 
     <!--  Each token will be replaced by their respective titles in the resulting page. -->
     <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Financer</title>
@@ -31,6 +33,11 @@
 <!--        <div th:replace="~{grundbausteine/layout/submission-alert-fragment :: submission-alert}"></div>-->
 <!--        <div th:replace="~{grundbausteine/layout/kleinauftrag-alert-fragment :: kleinauftrag-alert}"></div>-->
 <!--    </header>-->
+<!-- Needs to be above fragments for scripts to work -->
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
+<script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.3/b-3.0.1/b-colvis-3.0.1/b-print-3.0.1/date-1.5.2/fc-5.0.0/fh-4.0.1/sl-2.0.0/datatables.min.js"></script>
+
 <!-- Content -->
 <div layout:fragment="navbar"></div>
 <div class="container py-3 pt-lg-4">
@@ -40,6 +47,5 @@
 <!-- Footer -->
 <!--    <footer th:replace="~{grundbausteine/layout/footer-fragment :: footer}"></footer>-->
 <!--</div>-->
-<script th:src="@{/js/bootstrap.bundle.js}"></script>
 </body>
 </html>

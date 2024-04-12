@@ -19,8 +19,6 @@
     <!--          background-color: #dddddd;-->
     <!--        }-->
     <!--    </style>-->
-    <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.3/b-3.0.1/b-colvis-3.0.1/b-print-3.0.1/date-1.5.2/fc-5.0.0/fh-4.0.1/sl-2.0.0/datatables.min.css"
-          rel="stylesheet">
 </head>
 <div layout:fragment="navbar">
     <div th:replace="~{fragments/navigation-fragment.html :: navbar (activeTab = dashboard)}"></div>
@@ -95,8 +93,6 @@
 <div th:replace="~{fragments/create-transaction-fragment.html :: newTransactionForm (newTransaction = ${newTransaction}, categories = ${categories}, households = ${households}, possiblePayers = ${possiblePayers})}"></div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
-<script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.3/b-3.0.1/b-colvis-3.0.1/b-print-3.0.1/date-1.5.2/fc-5.0.0/fh-4.0.1/sl-2.0.0/datatables.min.js"></script>
 <script type="text/javascript">
     $(document).ready( function () {
         DataTable.type('date', 'className', ' ');
