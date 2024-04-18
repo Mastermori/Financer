@@ -24,6 +24,8 @@ public class UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         register(new UserDTO().setName("admin").setPassword("admin"));
+        register(new UserDTO().setName("test1").setPassword("test1"));
+        register(new UserDTO().setName("test2").setPassword("test2"));
     }
 
     public void register(UserDTO newUser) {
