@@ -21,32 +21,55 @@
                            th:classappend="${activeTab == 'home' ? 'active':''}"
                            th:href="@{/}">Home</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
                         <a class="nav-link"
                            th:aria-current="${activeTab == 'dashboard' ? 'page' : ''}"
                            th:classappend="${activeTab == 'dashboard' ? 'active':''}"
                            th:href="@{/dashboard}">Dashboard</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                         <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                           th:aria-current="${activeTab == 'household' ? 'page' : ''}"
+                           th:classappend="${activeTab == 'household' ? 'active':''}"
                            role="button">
-                            Dropdown
+                            Households
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark">
+                        <ul class="dropdown-menu">
+                            <li th:each="household: ${currentUser.getParticipatingHouseholds()}"><a class="dropdown-item" th:href="@{/households/{id}(id=${household.id})}" th:text="${household.name}"></a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" th:href="@{/households/new}">New Household</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav justify-content-end">
+                    <li class="nav-item dropstart" sec:authorize="isAuthenticated()">
+                        <a aria-expanded="false" class="btn btn-secondary rounded-circle" data-bs-toggle="dropdown"
+                           href="#"
+                           id="profileButton" role="button">
+                            <i class="fa-regular fa-user" id="profileButtonIcon"></i>
+                        </a>
+                        <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">Action</a></li>
                             <li><a class="dropdown-item" href="#">Another action</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
                         </ul>
                     </li>
+                    <li sec:authorize="isAnonymous()" class="nav-item">
+                        <a class="btn btn-primary rounded-circle h-100" th:href="@{/login}">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                        </a>
+                    </li>
+                    <div class="vr d-none d-lg-flex h-100 mx-lg-2 text-white"></div>
+                    <li class="nav-item btn btn-secondary" id="themeToggleButton">
+                        <i class="fa-solid fa-circle-half-stroke fa-flip-horizontal"
+                           id="themeToggleDisplayIcon"></i>
+                    </li>
                 </ul>
-                <div class="d-flex">
-                    <div class="btn btn-secondary" id="themeToggleButton">
-                        <i class="fa-solid fa-circle-half-stroke fa-flip-horizontal" id="themeToggleDisplayIcon"></i>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
