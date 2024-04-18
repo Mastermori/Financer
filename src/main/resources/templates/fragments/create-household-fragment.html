@@ -1,12 +1,13 @@
 <div class="container" th:fragment="newHouseholdForm (newHousehold, possibleParticipants)">
     <form class="row g-3" method="post" th:object="${newHousehold}">
-        <div class="col-12 col-lg-4">
+        <div class="col-lg-4 col-12">
             <label class="form-label" for="inputName">Name</label>
             <input class="form-control" id="inputName" name="name" th:field="*{name}" type="text">
             <p class="text-danger" th:errors="*{name}"
                th:if="${#fields.hasErrors('name')}"></p>
         </div>
-        <div class="col-12 col-lg-4 col-md-6">
+        <div class="col-lg-8 col-0"></div>
+        <div class="col-lg-4 col-12">
             <label class="form-label" for="inputParticipants">Participants</label>
             <select class="form-control" id="inputParticipants" multiple name="participantIds"
                     th:field="*{participantIds}">
@@ -16,8 +17,9 @@
             <p class="text-danger" th:errors="*{participantIds}"
                th:if="${#fields.hasErrors('participantIds')}"></p>
         </div>
+        <div class="col-lg-8 col-0"></div>
         <input name="ownerId" th:value="*{ownerId}" type="hidden">
-        <div class="col-auto col-lg mx-auto">
+        <div class="col-lg col-auto mx-auto">
             <button class="btn btn-primary" type="submit">Create</button>
         </div>
     </form>
