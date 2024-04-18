@@ -60,6 +60,7 @@ public class MainSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //noinspection Convert2MethodRef
         http
+                .userDetailsService(userDetailsService)
                 // Necessary to redirect from login. (https://twin.sh/articles/21/spring-security-prevent-authenticated-users-from-accessing-login-page)
                 .addFilterBefore(this::doFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf((csrf) -> csrf.disable())

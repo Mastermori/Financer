@@ -16,30 +16,28 @@ import java.util.Optional;
 public class HouseholdService {
 
     private final HouseholdRepository householdRepository;
-    private final CategoryRepository categoryRepository;
     private final UserService userService;
 
-    public HouseholdService(HouseholdRepository householdRepository, UserService userService, CategoryRepository categoryRepository) {
+    public HouseholdService(HouseholdRepository householdRepository, UserService userService) {
         this.householdRepository = householdRepository;
-        this.categoryRepository = categoryRepository;
         this.userService = userService;
 
-        Category cat1 = new Category().setDescription("Test1 H").setColor(Color.RED);
-        Category cat2 = new Category().setDescription("Test2 H").setColor(Color.BLUE);
-
-        FUser owner = userService.getUserById(1L).get();
-
-        Household household = new Household().setName("Test Household").setOwner(owner);
-
-        household.addCategory(cat1);
-        household.addCategory(cat2);
-
-        household.addParticipant(owner);
-
-        addHousehold(household);
-
-        categoryRepository.save(cat1);
-        categoryRepository.save(cat2);
+//        Category cat1 = new Category().setDescription("Test1 H").setColor(Color.RED);
+//        Category cat2 = new Category().setDescription("Test2 H").setColor(Color.BLUE);
+//
+//        FUser owner = userService.getUserById(1L).get();
+//
+//        Household household = new Household().setName("Test Household").setOwner(owner);
+//
+//        household.addCategory(cat1);
+//        household.addCategory(cat2);
+//
+//        addHousehold(household);
+//
+//        household.addParticipant(owner);
+//
+//        categoryRepository.save(cat1);
+//        categoryRepository.save(cat2);
     }
 
     public Optional<Household> getHouseholdById(Long id) {
@@ -54,12 +52,8 @@ public class HouseholdService {
         return householdRepository.findAllByOwnerId(user.getId());
     }
 
-    public void addHousehold(Household newTransaction) {
-        householdRepository.save(newTransaction);
-    }
-
-    public Optional<Category> getCategoryById(Long id) {
-        return categoryRepository.findById(id);
+    public void addHousehold(Household newHousehold) {
+        householdRepository.save(newHousehold);
     }
 
 }

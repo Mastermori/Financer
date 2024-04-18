@@ -65,7 +65,7 @@ public final class FUser {
         return role;
     }
 
-    Set<Household> getParticipatingHouseholds() {
+    public Set<Household> getParticipatingHouseholds() {
         return participatingHouseholds;
     }
 

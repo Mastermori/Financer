@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout}">
+<head>
+    <title>New Household</title>
+    <link rel="stylesheet" th:href="@{/css/generated/custom-choices.css}">
+<!--    <link-->
+<!--            href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"-->
+<!--            rel="stylesheet"-->
+<!--    />-->
+</head>
+<div layout:fragment="navbar">
+    <div th:replace="~{fragments/navigation-fragment.html :: navbar (activeTab = household)}"></div>
+</div>
+<body layout:fragment="content">
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+<h3>Create new Household</h3>
+<div th:replace="~{fragments/create-household-fragment.html :: newHouseholdForm (newHousehold = ${newHousehold}, possibleParticipants = ${possibleParticipants})}"></div>
+
+</body>
+</html>

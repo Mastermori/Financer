@@ -28,7 +28,7 @@ public class Household {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ownerId", nullable = false)
     private FUser owner;
-    @ManyToMany(cascade = {CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "householdParticipant", joinColumns = @JoinColumn(name = "householdId"), inverseJoinColumns = @JoinColumn(name = "usersId"))
     private Set<FUser> participants = new HashSet<>();
     @OneToMany(mappedBy = "household")
