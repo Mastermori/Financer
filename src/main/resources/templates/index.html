@@ -5,21 +5,22 @@
 </head>
 <div layout:fragment="navbar">
     <div th:replace="~{fragments/navigation-fragment.html :: navbar (activeTab = home)}"></div>
+<!--    <div sec:authorize="isAuthenticated()" th:replace="~{fragments/navigation-fragment.html :: navbar (activeTab = home)}"></div>-->
 </div>
 <body layout:fragment="content">
-<h2>Welcome</h2>
-<p class="test">Spring Security Thymeleaf tutorial</p>
-<div sec:authorize="hasRole('USER')">Text visible to user.</div>
-<div sec:authorize="hasRole('ADMIN')">Text visible to admin.</div>
+<!--<div sec:authorize="hasRole('USER')">Text visible to user.</div>-->
+<!--<div sec:authorize="hasRole('ADMIN')">Text visible to admin.</div>-->
 <div sec:authorize="isAuthenticated()">
-    Text visible only to authenticated users.
-    <h3>Authenticated username:</h3>
-    <div sec:authentication="name"></div>
-    <h3>Authenticated user roles:</h3>
-    <div sec:authentication="principal.authorities"></div>
+    <h3 th:text="|Welcome ${#authentication.principal.user.name}|">Welcome message</h3>
+    <p>This page will not be of much use to you.</p>
+    <a th:href="@{/dashboard}">Go to Dashboard</a>
 </div>
-<div sec:authorize="isAnonymous()">
-    <a class="btn btn-success" th:href="@{/login}">Login</a>
+<div class="" sec:authorize="isAnonymous()">
+    <h3>Welcome</h3>
+    <p>You are currently not logged in. <br />
+    Either log in or register a new account.</p>
+    <a class="btn btn-primary" th:href="@{/login}">Login</a>
+    <a class="btn btn-primary" th:href="@{/register}">Register</a>
 </div>
 </body>
 </html>
