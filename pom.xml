@@ -75,6 +75,28 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>us.hebi.sass</groupId>
+                <artifactId>sass-cli-maven-plugin</artifactId>
+                <version>1.0.3</version>
+                <configuration>
+                    <sassVersion>1.62.0</sassVersion>
+                    <args> <!-- Any argument that should be forwarded to the sass cli -->
+                        <arg>
+                            ${project.basedir}/src/main/resources/scss:${project.basedir}/src/main/resources/static/css/generated
+                        </arg>
+                    </args>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sass-exec</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
