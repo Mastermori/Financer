@@ -26,30 +26,7 @@ import java.io.IOException;
 public class MainSecurityConfig {
 
     @Autowired
-    private UserDetailsService userDetailsService;
-
-//    @Bean
-//    public InMemoryUserDetailsManager userDetailsManager() {
-//        UserDetails user1 = User.withUsername("user1")
-//                .password(passwordEncoder().encode("user1"))
-//                .roles("USER")
-//                .build();
-//        UserDetails user2 = User.withUsername("user2")
-//                .password(passwordEncoder().encode("user2"))
-//                .roles("USER")
-//                .build();
-//        UserDetails admin = User.withUsername("admin")
-//                .password(passwordEncoder().encode("admin"))
-//                .roles("ADMIN")
-//                .build();
-//        return new InMemoryUserDetailsManager(user1, user2, admin);
-//    }
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(userDetailsService);
-    }
+    private CustomUserDetailsService userDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -64,6 +41,7 @@ public class MainSecurityConfig {
                 // Necessary to redirect from login. (https://twin.sh/articles/21/spring-security-prevent-authenticated-users-from-accessing-login-page)
                 .addFilterBefore(this::doFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf((csrf) -> csrf.disable())
+                .headers((headers) -> headers.frameOptions(frameOptions -> frameOptions.disable()))
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/admin/**")
                         .hasRole("ADMIN")
