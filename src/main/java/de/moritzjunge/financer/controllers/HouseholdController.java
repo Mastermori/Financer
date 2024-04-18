@@ -79,6 +79,10 @@ public class HouseholdController {
 
     @GetMapping("/{id}")
     public String getHousehold(Model model, @PathVariable Long id) {
-        return "index";
+        Optional<Household> householdOptional = householdService.getHouseholdById(id);
+        if (householdOptional.isEmpty())
+            return "redirect:dashboard";
+        model.addAttribute("household", householdOptional.get());
+        return "household";
     }
 }
