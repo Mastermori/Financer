@@ -8,8 +8,10 @@ import de.moritzjunge.financer.services.CategoryService;
 import de.moritzjunge.financer.services.HouseholdService;
 import de.moritzjunge.financer.services.UserService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,21 +37,30 @@ public class HouseholdController {
         this.userService = userService;
     }
 
+    private void addModelAttributes(Model model) {
+        FUser currentUser = userService.getAuthenticatedUser();
+        List<FUser> possibleParticipants = userService.getUsers();
+        possibleParticipants.remove(currentUser);
+
+        model.addAttribute("possibleParticipants", possibleParticipants);
+    }
+
     @GetMapping("/new")
     public String getHouseholdCreation(Model model) {
         FUser currentUser = userService.getAuthenticatedUser();
         Household newHousehold = new Household().setOwner(currentUser).setName("");
 
-        List<FUser> possibleParticipants = userService.getUsers();
-        possibleParticipants.remove(currentUser);
-
+        addModelAttributes(model);
         model.addAttribute("newHousehold", HouseholdDTO.fromEntities(newHousehold));
-        model.addAttribute("possibleParticipants", possibleParticipants);
         return "new-household";
     }
 
     @PostMapping("/new")
-    public String createHousehold(Model model, @ModelAttribute HouseholdDTO newHouseholdDTO) {
+    public String createHousehold(Model model, @Valid @ModelAttribute(name = "newHousehold") HouseholdDTO newHouseholdDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            addModelAttributes(model);
+            return "new-household";
+        }
         FUser owner = userService.getUserById(newHouseholdDTO.getOwnerId()).get();
         Household household = new Household()
                 .setOwner(owner)
