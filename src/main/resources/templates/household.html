@@ -15,7 +15,16 @@
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
 <h3 th:text="|Household ${household.name}"></h3>
-
+<p th:text="|Owned by ${household.owner.name}"></p>
+<h4>Categories:</h4>
+<ul>
+    <li th:each="category: ${household.categories}" th:text="${category.description}"></li>
+</ul>
+<h4>Participants:</h4>
+<ul>
+    <li th:each="participant: ${household.participants}" th:text="${participant.name}"></li>
+</ul>
+<a th:href="@{/dashboard?householdId={id}(id = ${household.id})}">Show transactions</a>
 
 </body>
 </html>
