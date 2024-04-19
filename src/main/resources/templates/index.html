@@ -11,7 +11,7 @@
 <!--<div sec:authorize="hasRole('USER')">Text visible to user.</div>-->
 <!--<div sec:authorize="hasRole('ADMIN')">Text visible to admin.</div>-->
 <div sec:authorize="isAuthenticated()">
-    <h3 th:text="|Welcome ${#authentication.principal.user.name}|">Welcome message</h3>
+    <h3 th:text="|Welcome ${#authentication.name}|">Welcome message</h3>
     <p>This page will not be of much use to you.</p>
     <a th:href="@{/dashboard}">Go to Dashboard</a>
 </div>
