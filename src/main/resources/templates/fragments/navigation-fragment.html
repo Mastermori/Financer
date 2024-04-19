@@ -15,19 +15,19 @@
             </div>
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
-                    <li class="nav-item">
+                    <li class="nav-item" th:classappend="${activeTab == 'home' ? 'active-nav-border':''}">
                         <a class="nav-link"
                            th:aria-current="${activeTab == 'home' ? 'page' : ''}"
                            th:classappend="${activeTab == 'home' ? 'active':''}"
                            th:href="@{/}">Home</a>
                     </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <li class="nav-item" th:classappend="${activeTab == 'dashboard' ? 'active-nav-border':''}" sec:authorize="isAuthenticated()">
                         <a class="nav-link"
                            th:aria-current="${activeTab == 'dashboard' ? 'page' : ''}"
                            th:classappend="${activeTab == 'dashboard' ? 'active':''}"
                            th:href="@{/dashboard}">Dashboard</a>
                     </li>
-                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <li class="nav-item dropdown" th:classappend="${activeTab == 'household' ? 'active-nav-border':''}" sec:authorize="isAuthenticated()">
                         <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
                            th:aria-current="${activeTab == 'household' ? 'page' : ''}"
                            th:classappend="${activeTab == 'household' ? 'active':''}"
@@ -35,7 +35,7 @@
                             Households
                         </a>
                         <ul class="dropdown-menu">
-                            <li th:each="household: ${currentUser.getParticipatingHouseholds()}"><a class="dropdown-item" th:href="@{/households/{id}(id=${household.id})}" th:text="${household.name}"></a></li>
+                            <li th:each="household: ${currentUser?.participatingHouseholds}"><a class="dropdown-item" th:href="@{/households/{id}(id=${household.id})}" th:text="${household.name}"></a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
