@@ -4,14 +4,13 @@ import de.moritzjunge.financer.model.Category;
 import de.moritzjunge.financer.model.FUser;
 import de.moritzjunge.financer.model.Household;
 import de.moritzjunge.financer.model.Transaction;
-import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class TransactionDTO {
-    @NotNull
     private Long id;
     private int amount;
     @NotNull
@@ -19,7 +18,6 @@ public class TransactionDTO {
     @NotNull
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate transactionDate;
-    @NotNull
     @DateTimeFormat(pattern = "dd/MM/yyyy hh:mm")
     private LocalDateTime creationDate;
     @NotNull

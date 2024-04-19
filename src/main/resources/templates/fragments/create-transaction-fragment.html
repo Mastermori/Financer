@@ -2,48 +2,42 @@
     <form class="row g-3" method="post" th:object="${newTransaction}">
         <div class="col-12 col-lg-4">
             <label class="form-label" for="inputAmount">Amount</label>
-            <input class="form-control" id="inputAmount" name="amount" th:field="*{amount}" type="text">
-            <p class="text-danger" th:errors="*{amount}"
-               th:if="${#fields.hasErrors('amount')}"></p>
+            <input class="form-control" id="inputAmount" name="amount"  th:field="*{amount}" th:errorclass="is-invalid"  type="text">
+            <p class="text-danger" th:errors="*{amount}"></p>
         </div>
         <div class="col-12 col-lg-4">
             <label class="form-label" for="inputDescription">Description</label>
-            <input class="form-control" id="inputDescription" name="description" th:field="*{description}" type="text">
-            <p class="text-danger" th:errors="*{description}"
-               th:if="${#fields.hasErrors('description')}"></p>
+            <input class="form-control" id="inputDescription" name="description" th:field="*{description}" th:errorclass="is-invalid"  type="text">
+            <p class="text-danger" th:errors="*{description}"></p>
         </div>
         <div class="col-12 col-lg-4">
             <label class="form-label" for="creation-date-picker">Date</label>
-            <input class="form-control" id="creation-date-picker" name="transactionDate" th:field="*{transactionDate}"
+            <input class="form-control" id="creation-date-picker" name="transactionDate" th:field="*{transactionDate}" th:errorclass="is-invalid"
                    type="text">
-            <p class="text-danger" th:errors="*{transactionDate}"
-               th:if="${#fields.hasErrors('transactionDate')}"></p>
+            <p class="text-danger" th:errors="*{transactionDate}"></p>
         </div>
         <div class="col-12 col-lg-4">
             <label class="form-label" for="inputCategory">Category</label>
-            <select class="form-control" id="inputCategory" name="category" th:field="*{categoryId}">
+            <select class="form-control" id="inputCategory" name="category" th:field="*{categoryId}" th:errorclass="is-invalid" >
                 <option th:each="category : ${categories}" th:text="${category.description}"
                         th:value="${category.id}"></option>
             </select>
-            <p class="text-danger" th:errors="*{categoryId}"
-               th:if="${#fields.hasErrors('categoryId')}"></p>
+            <p class="text-danger" th:errors="*{categoryId}"></p>
         </div>
         <div class="col-12 col-lg-4 col-md-6">
             <label class="form-label" for="inputHousehold">Household</label>
-            <select class="form-control" id="inputHousehold" name="household" th:field="*{householdId}">
+            <select class="form-control" id="inputHousehold" name="household" th:field="*{householdId}" th:errorclass="is-invalid" >
                 <option th:each="household : ${households}" th:text="${household.name}"
                         th:value="${household.id}"></option>
             </select>
-            <p class="text-danger" th:errors="*{householdId}"
-               th:if="${#fields.hasErrors('householdId')}"></p>
+            <p class="text-danger" th:errors="*{householdId}"></p>
         </div>
         <div class="col-12 col-lg-4 col-md-6">
             <label class="form-label" for="inputPayer">Payer</label>
-            <select class="form-control" id="inputPayer" name="payer" th:field="*{payerId}">
+            <select class="form-control" id="inputPayer" name="payer" th:field="*{payerId}" th:errorclass="is-invalid" >
                 <option th:each="payer : ${possiblePayers}" th:text="${payer.name}" th:value="${payer.id}"></option>
             </select>
-            <p class="text-danger" th:errors="*{payerId}"
-               th:if="${#fields.hasErrors('payerId')}"></p>
+            <p class="text-danger" th:errors="*{payerId}"></p>
         </div>
         <input name="ownerId" th:value="*{ownerId}" type="hidden">
         <div class="col-auto col-lg mx-auto">

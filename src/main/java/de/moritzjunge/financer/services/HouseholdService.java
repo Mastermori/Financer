@@ -56,4 +56,8 @@ public class HouseholdService {
         householdRepository.save(newHousehold);
     }
 
+    public boolean householdExists(Long id) {
+        return householdRepository.existsById(id);
+    }
+
 }
