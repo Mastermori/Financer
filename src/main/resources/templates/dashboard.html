@@ -26,6 +26,14 @@
 <body layout:fragment="content">
 <h2>Transactions</h2>
 <!--Only visible on small screens: -->
+<div class="row" th:if="${selectedHouseholdId != null && !selectedHouseholdId.isEmpty()}">
+    <div class="col-12">
+        <p th:text="|Only showing transactions for household with id ${selectedHouseholdId}|"></p>
+    </div>
+    <div class="col12">
+        <a th:href="@{/dashboard}">Show all</a>
+    </div>
+</div>
 <div class="d-inline d-md-none">
     <div th:if="${transactions.isEmpty()}" class="mb-3">
         <div class="text-muted">No transactions added yet.</div>
