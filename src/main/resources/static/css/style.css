@@ -1,3 +1,7 @@
 .active-nav-border {
     border-bottom: 2px solid rgba(150, 150, 150, 0.4375) !important;
 }
+
+select option[disabled] {
+    display: none;
+}

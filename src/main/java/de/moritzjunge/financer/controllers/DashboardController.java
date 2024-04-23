@@ -4,6 +4,7 @@ import de.moritzjunge.financer.model.Category;
 import de.moritzjunge.financer.model.FUser;
 import de.moritzjunge.financer.model.Household;
 import de.moritzjunge.financer.model.Transaction;
+import de.moritzjunge.financer.model.dtos.HouseholdDTO;
 import de.moritzjunge.financer.model.dtos.TransactionDTO;
 import de.moritzjunge.financer.services.CategoryService;
 import de.moritzjunge.financer.services.HouseholdService;
@@ -23,10 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/dashboard")
@@ -52,14 +51,7 @@ public class DashboardController {
             filteredTransactions = filteredTransactions.stream().filter(household -> household.getId().equals(Long.parseLong(householdId))).toList();
         }
 
-        Transaction newTransaction = new Transaction(100, "", LocalDate.now(), null);
-        FUser currentUser = userService.getAuthenticatedUser();
-        Set<Household> households = currentUser.getParticipatingHouseholds();
-        Household household = households.isEmpty() ? new Household().setId(-1L).setName("No Household") : households.iterator().next();
-        Category selectedCategory = household.getId() == -1 ? new Category().setDescription("No categories") : household.getCategories().iterator().next();
-
-        model.addAttribute("newTransaction",
-                TransactionDTO.fromEntities(newTransaction, currentUser, currentUser, selectedCategory, household));
+        attachNewTransaction(model);
         attachModelAttributes(model, filteredTransactions);
         model.addAttribute("selectedHouseholdId", householdId);
 
@@ -72,14 +64,31 @@ public class DashboardController {
     }
 
     @PostMapping("/edit")
-    public String editTransaction(Model model, @Valid @ModelAttribute(name = "editTransaction") TransactionDTO newTransactionDTO, BindingResult bindingResult) {
-        Optional<Transaction> transactionOptional = transactionService.getTransactionById(newTransactionDTO.getId());
+    public String editTransaction(Model model, @Valid @ModelAttribute(name = "editTransaction") TransactionDTO editedTransactionDTO, BindingResult bindingResult) {
+        Optional<Transaction> transactionOptional = transactionService.getTransactionById(editedTransactionDTO.getId());
         if (transactionOptional.isEmpty()) {
             return "redirect:/dashboard";
         }
+        validateTransactionDTO(editedTransactionDTO, bindingResult);
+        if (bindingResult.hasErrors()) {
+            List<Transaction> filteredTransactions = transactionService.getTransactions();
+            attachNewTransaction(model);
+            attachModelAttributes(model, filteredTransactions);
+            model.addAttribute("editTransaction", editedTransactionDTO);
+            return "dashboard";
+        }
         Transaction transaction = transactionOptional.get();
-        transaction.setAmount(newTransactionDTO.getAmount());
-        transaction.setDescription(newTransactionDTO.getDescription());
+        transaction.setAmount(editedTransactionDTO.getAmount());
+        transaction.setDescription(editedTransactionDTO.getDescription());
+        transaction.setTransactionDate(editedTransactionDTO.getTransactionDate());
+        if (!Objects.equals(transaction.getCategory().getId(), editedTransactionDTO.getCategoryId())) {
+            Category category = categoryService.getCategoryById(editedTransactionDTO.getCategoryId()).get();
+            transaction.setCategory(category);
+        }
+        if (!Objects.equals(transaction.getPayer().getId(), editedTransactionDTO.getPayerId())) {
+            FUser payer = userService.getUserById(editedTransactionDTO.getPayerId()).get();
+            transaction.setPayer(payer);
+        }
         return "redirect:/dashboard";
     }
 
@@ -92,26 +101,13 @@ public class DashboardController {
 
     @PostMapping
     public String createTransaction(Model model, @Valid @ModelAttribute(name = "newTransaction") TransactionDTO newTransactionDTO, BindingResult bindingResult) {
-        if (!bindingResult.hasFieldErrors("householdId") && !householdService.householdExists(newTransactionDTO.getHouseholdId())) {
-            bindingResult.rejectValue("householdId", "household.id.missing", "could not find that household. Try refreshing");
-        }
-        if (!bindingResult.hasFieldErrors("ownerId") && !userService.userExists(newTransactionDTO.getOwnerId())) {
-            bindingResult.rejectValue("ownerId", "owner.id.missing", "could not find that user. Try refreshing");
-        }
-        if (!bindingResult.hasFieldErrors("payerId") && !userService.userExists(newTransactionDTO.getPayerId())) {
-            bindingResult.rejectValue("payerId", "payer.id.missing", "could not find that user. Try refreshing");
-        }
-        if (!bindingResult.hasFieldErrors("categoryId") && !categoryService.categoryExists(newTransactionDTO.getCategoryId())) {
-            bindingResult.rejectValue("categoryId", "category.id.missing", "could not find that category. Try refreshing");
-        }
-        if (newTransactionDTO.getAmount() == 0) {
-            bindingResult.rejectValue("amount", "amount.zero", "cannot be zero");
-        }
+        validateTransactionDTO(newTransactionDTO, bindingResult);
         if (bindingResult.hasErrors()) {
             List<Transaction> filteredTransactions = transactionService.getTransactions();
             attachModelAttributes(model, filteredTransactions);
             return "dashboard";
         }
+
         Household household = householdService.getHouseholdById(newTransactionDTO.getHouseholdId()).get();
         FUser owner = userService.getUserById(newTransactionDTO.getOwnerId()).get();
         FUser payer = userService.getUserById(newTransactionDTO.getPayerId()).get();
@@ -130,14 +126,43 @@ public class DashboardController {
         return "redirect:/dashboard";
     }
 
+    private void validateTransactionDTO(TransactionDTO transactionDTO, BindingResult bindingResult) {
+        if (!bindingResult.hasFieldErrors("householdId") && !householdService.householdExists(transactionDTO.getHouseholdId())) {
+            bindingResult.rejectValue("householdId", "household.id.missing", "could not find that household. Try refreshing");
+        }
+        if (!bindingResult.hasFieldErrors("ownerId") && !userService.userExists(transactionDTO.getOwnerId())) {
+            bindingResult.rejectValue("ownerId", "owner.id.missing", "could not find that user. Try refreshing");
+        }
+        if (!bindingResult.hasFieldErrors("payerId") && !userService.userExists(transactionDTO.getPayerId())) {
+            bindingResult.rejectValue("payerId", "payer.id.missing", "could not find that user. Try refreshing");
+        }
+        if (!bindingResult.hasFieldErrors("categoryId") && !categoryService.categoryExists(transactionDTO.getCategoryId())) {
+            bindingResult.rejectValue("categoryId", "category.id.missing", "could not find that category. Try refreshing");
+        }
+        if (transactionDTO.getAmount() == 0) {
+            bindingResult.rejectValue("amount", "amount.zero", "cannot be zero");
+        }
+    }
+
+    private void attachNewTransaction(Model model) {
+        Transaction newTransaction = new Transaction(100, "", LocalDate.now(), null);
+        FUser currentUser = userService.getAuthenticatedUser();
+        Set<Household> households = currentUser.getParticipatingHouseholds();
+        Household household = households.isEmpty() ? new Household().setId(-1L).setName("No Household") : households.iterator().next();
+        Category selectedCategory = household.getId() == -1 ? new Category().setDescription("No categories") : household.getCategories().iterator().next();
+
+        model.addAttribute("newTransaction",
+                TransactionDTO.fromEntities(newTransaction, currentUser, currentUser, selectedCategory, household));
+    }
+
     private void attachModelAttributes(Model model, List<Transaction> transactions) {
         FUser currentUser = userService.getAuthenticatedUser();
         Set<Household> households = currentUser.getParticipatingHouseholds();
         Household household = households.isEmpty() ? null : households.iterator().next();
-        Set<FUser> possiblePayers = household == null ? new HashSet<>() : household.getParticipants();
+        Set<FUser> possiblePayers = new HashSet<>(userService.getUsers());
 
         model.addAttribute("categories", household != null ? household.getCategories() : new HashSet<>());
-        model.addAttribute("households", households);
+        model.addAttribute("households", households.stream().map(HouseholdDTO::fromEntities).collect(Collectors.toSet()));
         model.addAttribute("possiblePayers", possiblePayers);
         model.addAttribute("timestamp", LocalDate.now());
         model.addAttribute("transactions", transactions);

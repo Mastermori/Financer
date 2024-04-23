@@ -158,23 +158,23 @@
                 searchable: false
             }]
         });
-        // let dts = document.querySelectorAll('.date-picker');
-        // dts.forEach(function (dt) {
-        //     console.log('[[${#temporals.format(timestamp.plusDays(1), "yyyy-MM-dd")}]]');
-        //     let d = new DateTime(dt, {
-        //         format: 'DD/MM/YYYY',
-        //         buttons: {
-        //             today: true
-        //         },
-        //         maxDate: '[[${#temporals.format(timestamp.plusDays(1), "yyyy-MM-dd")}]]',
-        //     });
-        // });
-        let d = new DateTime(document.getElementById('creation-date-picker'), {
-            format: 'DD/MM/YYYY',
-            buttons: {
-                today: true
-            },
-            maxDate: '[[${#temporals.format(newTransaction.transactionDate.plusDays(1), "yyyy-MM-dd")}]]'
+        let dts = document.querySelectorAll('.date-picker');
+        dts.forEach(function (dt) {
+            let d = new DateTime(dt, {
+                format: 'DD/MM/YYYY',
+                buttons: {
+                    today: true
+                },
+                maxDate: '[[${#temporals.format(timestamp.plusDays(1), "yyyy-MM-dd")}]]',
+            });
+        });
+        let modals = document.querySelectorAll('.modal');
+        modals.forEach(function (modal) {
+            let firstInput = modal.querySelector('input');
+            modal.addEventListener('shown.bs.modal', () => {
+                firstInput.focus();
+                firstInput.select();
+            });
         });
 
         // $('#transactions').on( 'click', 'tbody tr', function () {
