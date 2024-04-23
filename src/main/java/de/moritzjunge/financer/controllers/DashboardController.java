@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Controller
@@ -45,11 +46,12 @@ public class DashboardController {
     }
 
     @GetMapping
-    public String getDashboard(Model model, @RequestParam(required = false, defaultValue = "") String householdId) {
+    public String getDashboard(Model model, @RequestParam(required = false, defaultValue = "") String householdId, @RequestParam(required = false, defaultValue = "") String editTransactionId) {
         List<Transaction> filteredTransactions = transactionService.getTransactions();
         if (!householdId.isEmpty()) {
             filteredTransactions = filteredTransactions.stream().filter(household -> household.getId().equals(Long.parseLong(householdId))).toList();
         }
+
         Transaction newTransaction = new Transaction(100, "", LocalDate.now(), null);
         FUser currentUser = userService.getAuthenticatedUser();
         Set<Household> households = currentUser.getParticipatingHouseholds();
@@ -60,7 +62,25 @@ public class DashboardController {
                 TransactionDTO.fromEntities(newTransaction, currentUser, currentUser, selectedCategory, household));
         attachModelAttributes(model, filteredTransactions);
         model.addAttribute("selectedHouseholdId", householdId);
+
+        if (!editTransactionId.isEmpty()) {
+            Optional<Transaction> editTransaction = transactionService.getTransactionById(Long.parseLong(editTransactionId));
+            editTransaction.ifPresent(transaction -> model.addAttribute("editTransaction", TransactionDTO.fromEntities(transaction)));
+        }
+
         return "dashboard";
+    }
+
+    @PostMapping("/edit")
+    public String editTransaction(Model model, @Valid @ModelAttribute(name = "editTransaction") TransactionDTO newTransactionDTO, BindingResult bindingResult) {
+        Optional<Transaction> transactionOptional = transactionService.getTransactionById(newTransactionDTO.getId());
+        if (transactionOptional.isEmpty()) {
+            return "redirect:/dashboard";
+        }
+        Transaction transaction = transactionOptional.get();
+        transaction.setAmount(newTransactionDTO.getAmount());
+        transaction.setDescription(newTransactionDTO.getDescription());
+        return "redirect:/dashboard";
     }
 
     @PostMapping("/delete/{id}")
@@ -119,7 +139,7 @@ public class DashboardController {
         model.addAttribute("categories", household != null ? household.getCategories() : new HashSet<>());
         model.addAttribute("households", households);
         model.addAttribute("possiblePayers", possiblePayers);
-        model.addAttribute("zeitstempel", LocalDateTime.now().plusHours(10));
+        model.addAttribute("timestamp", LocalDate.now());
         model.addAttribute("transactions", transactions);
     }
 

@@ -16,7 +16,7 @@
         </div>
         <div class="col-12 col-lg-6">
             <label class="form-label" for="creation-date-picker">Date</label>
-            <input class="form-control" id="creation-date-picker" name="transactionDate" th:field="*{transactionDate}" th:errorclass="is-invalid"
+            <input class="form-control date-picker" id="creation-date-picker" name="transactionDate" th:field="*{transactionDate}" th:errorclass="is-invalid"
                    type="text">
             <p class="text-danger" th:errors="*{transactionDate}"></p>
         </div>

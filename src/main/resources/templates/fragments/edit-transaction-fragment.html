@@ -1,5 +1,5 @@
-<div class="container" th:fragment="editTransactionForm (transaction, categories, households, possiblePayers)">
-    <form class="row g-3" method="post" th:object="${transaction}">
+<div class="container" th:fragment="editTransactionForm (editTransaction, categories, households, possiblePayers)">
+    <form class="row g-3" method="POST" th:object="${editTransaction}" th:action="@{/dashboard/edit}">
         <div class="text-danger" th:if="${households.size() == 0}">
             <i class="fa-solid fa-circle-exclamation"></i>
             You have no households, please create one first.
@@ -16,7 +16,7 @@
         </div>
         <div class="col-12 col-lg-6">
             <label class="form-label" for="creation-date-picker">Date</label>
-            <input class="form-control" id="creation-date-picker" name="transactionDate" th:field="*{transactionDate}" th:errorclass="is-invalid"
+            <input class="form-control date-picker" id="creation-date-picker" name="transactionDate" th:field="*{transactionDate}" th:errorclass="is-invalid"
                    type="text">
             <p class="text-danger" th:errors="*{transactionDate}"></p>
         </div>
@@ -44,6 +44,7 @@
             <p class="text-danger" th:errors="*{payerId}"></p>
         </div>
         <input name="ownerId" th:value="*{ownerId}" type="hidden">
+        <input name="id" th:value="*{id}" type="hidden">
         <div class="col-auto col-lg mx-auto">
             <button class="btn btn-primary d-none" id="submitTransactionEdit" type="submit">Create</button>
         </div>

@@ -43,6 +43,20 @@ public class TransactionDTO {
         return newDTO;
     }
 
+    public static TransactionDTO fromEntities(@NotNull Transaction transaction) {
+        TransactionDTO newDTO = new TransactionDTO();
+        newDTO.setId(transaction.getId());
+        newDTO.setAmount(transaction.getAmount());
+        newDTO.setDescription(transaction.getDescription());
+        newDTO.setTransactionDate(transaction.getTransactionDate());
+        newDTO.setCreationDate(transaction.getCreationDate());
+        newDTO.setOwnerId(transaction.getOwner().getId());
+        newDTO.setPayerId(transaction.getPayer().getId());
+        newDTO.setCategoryId(transaction.getCategory().getId());
+        newDTO.setHouseholdId(transaction.getHousehold().getId());
+        return newDTO;
+    }
+
     public Long getId() {
         return id;
     }

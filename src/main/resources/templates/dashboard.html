@@ -92,19 +92,18 @@
             <td th:text="${transaction.payer.name}">Payer</td>
             <td th:text="${transaction.owner.name}">Creator</td>
             <td>
-                <form th:action="@{/dashboard/delete/{id}(id = ${transaction.id})}" method="POST">
-                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
-                </form>
+                <div class="row">
+                    <a class="col-auto btn btn-primary btn-sm" th:href="@{/dashboard?editTransactionId={id}(id = ${transaction.id})}"><i class="fa-solid fa-pen"></i></a>
+                    <form class="col-auto" th:action="@{/dashboard/delete/{id}(id = ${transaction.id})}" method="POST">
+                        <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                    </form>
+                </div>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
-<!--<ol th:each="transaction: ${transactions}">-->
-<!--    <li th:text="${transaction.description}">Description</li>-->
-<!--    <li th:text="${transaction.getFormattedAmount()}">Amount</li>-->
-<!--</ol>-->
-<div th:if="${#fields.hasErrors('${newTransaction.*}')}">Has errors!</div>
+
 <div class="modal fade" id="newTransactionModal" tabindex="-1" aria-labelledby="createTransactionModalLabel" th:aria-hidden="${#fields.hasErrors('${newTransaction.*}') ? 'true' : 'false'}">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
@@ -125,15 +124,15 @@
 </div>
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTransactionModal">Create transaction</button>
 
-<div th:each="transaction : ${transactions}" class="modal fade" th:id="|editTransaction${transaction.id}Modal|" tabindex="-1" th:aria-labelledby="|editTransaction${transaction.id}ModalLabel|" aria-hidden="false">
+<div th:if="${editTransaction != null}" class="modal fade" id="editTransaction" tabindex="-1" th:aria-labelledby="editTransactionLabel" aria-hidden="false">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" th:id="|editTransaction${transaction.id}ModalLabel|">Create Transaction</h1>
+                <h1 class="modal-title fs-5" th:id="editTransactionLabel">Create Transaction</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div th:replace="~{fragments/edit-transaction-fragment.html :: editTransactionForm (transaction = ${transaction}, categories = ${categories}, households = ${households}, possiblePayers = ${possiblePayers})}"></div>
+                <div th:replace="~{fragments/edit-transaction-fragment.html :: editTransactionForm (editTransaction = ${editTransaction}, categories = ${categories}, households = ${households}, possiblePayers = ${possiblePayers})}"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -148,6 +147,7 @@
 <script type="text/javascript" th:inline="javascript">
     $(document).ready( function () {
         if ([[${#fields.hasErrors('${newTransaction.*}')}]]) $('#newTransactionModal').modal('show');
+        if ([[${editTransaction != null}]]) $('#editTransaction').modal('show');
         DataTable.type('date', 'className', ' ');
         let table = new DataTable("#transactions", {
             fixedHeader: true,
@@ -158,18 +158,30 @@
                 searchable: false
             }]
         });
-        let dt = new DateTime(document.getElementById("creation-date-picker"), {
+        // let dts = document.querySelectorAll('.date-picker');
+        // dts.forEach(function (dt) {
+        //     console.log('[[${#temporals.format(timestamp.plusDays(1), "yyyy-MM-dd")}]]');
+        //     let d = new DateTime(dt, {
+        //         format: 'DD/MM/YYYY',
+        //         buttons: {
+        //             today: true
+        //         },
+        //         maxDate: '[[${#temporals.format(timestamp.plusDays(1), "yyyy-MM-dd")}]]',
+        //     });
+        // });
+        let d = new DateTime(document.getElementById('creation-date-picker'), {
             format: 'DD/MM/YYYY',
             buttons: {
                 today: true
             },
             maxDate: '[[${#temporals.format(newTransaction.transactionDate.plusDays(1), "yyyy-MM-dd")}]]'
         });
-        $('#transactions').on( 'click', 'tbody tr', function () {
-            tId = table.row( this ).data()[0];
-            console.log("Showing modal " + tId + ".");
-            $('#editTransaction' + tId + 'Modal').modal('show');
-        });
+
+        // $('#transactions').on( 'click', 'tbody tr', function () {
+        //     tId = table.row( this ).data()[0];
+        //     console.log("Showing modal " + tId + ".");
+        //     // $('#editTransaction' + tId + 'Modal').modal('show');
+        // });
     } );
 </script>
 
