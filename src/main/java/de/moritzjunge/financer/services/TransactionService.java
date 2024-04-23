@@ -40,4 +40,8 @@ public class TransactionService {
         transactions.save(newTransaction);
     }
 
+    public void removeTransactionById(Long id) {
+        transactions.deleteById(id);
+    }
+
 }

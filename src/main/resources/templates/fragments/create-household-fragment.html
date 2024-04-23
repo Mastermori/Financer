@@ -1,15 +1,14 @@
-<div class="container" th:fragment="newHouseholdForm (newHousehold, possibleParticipants)">
-    <form class="row g-3" method="post" th:object="${newHousehold}">
-        <div class="col-lg-4 col-12">
+<div class="container" th:fragment="newHouseholdForm (newHousehold, possibleParticipants, isModal)">
+    <form class="row g-3" method="post" th:object="${newHousehold}" th:action="@{/households/new}">
+        <div class="col-12">
             <label class="form-label" for="inputName">Name</label>
             <input class="form-control" id="inputName" name="name" th:errorclass="is-invalid" th:field="*{name}"
                    type="text">
             <p class="text-danger" th:errors="*{name}"></p>
         </div>
-        <div class="col-lg-8 col-0"></div>
-        <div class="col-lg-4 col-12">
-            <label class="form-label" for="inputParticipants">Participants</label>
-            <select class="form-control" id="inputParticipants" multiple name="participantIds"
+        <div class="col-12">
+            <label class="form-label" th:for="|inputParticipants${isModal}|">Participants</label>
+            <select class="form-control" th:id="|inputParticipants${isModal}|" multiple name="participantIds"
                     th:errorclass="is-invalid" th:field="*{participantIds}">
                 <option th:each="participant : ${possibleParticipants}" th:inline="text"
                         th:text="${participant.name}" th:value="${participant.id}"></option>
@@ -17,16 +16,18 @@
             <p class="text-danger" th:errors="*{participantIds}"
                th:if="${#fields.hasErrors('participantIds')}"></p>
         </div>
-        <div class="col-lg-8 col-0"></div>
         <input name="ownerId" th:value="*{ownerId}" type="hidden">
         <div class="col-lg col-auto mx-auto">
-            <button class="btn btn-primary" type="submit">Create</button>
+            <button class="btn btn-success" th:classappend="${isModal ? 'd-none' : ''}" id="submitHouseholdCreation" type="submit">Create</button>
         </div>
     </form>
-    <script type="text/javascript">
-        const choices = new Choices('#inputParticipants', {
+    <script type="text/javascript" th:inline="javascript">
+        new Choices('#inputParticipants[(${isModal})]', {
             removeItemButton: true,
             allowHTML: false,
         });
     </script>
 </div>
+
+<label for="submitHouseholdCreation" class="btn btn-success" tabindex="0" th:fragment="newHouseholdFormSubmitButton">Create</label>
+<!--<button type="button" class="btn btn-success" th:fragment="newHouseholdFormSubmitButton">Create</button>-->

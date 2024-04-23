@@ -1,5 +1,5 @@
-<div class="container" th:fragment="newTransactionForm (newTransaction, categories, households, possiblePayers)">
-    <form class="row g-3" method="post" th:object="${newTransaction}">
+<div class="container" th:fragment="editTransactionForm (transaction, categories, households, possiblePayers)">
+    <form class="row g-3" method="post" th:object="${transaction}">
         <div class="text-danger" th:if="${households.size() == 0}">
             <i class="fa-solid fa-circle-exclamation"></i>
             You have no households, please create one first.
@@ -30,7 +30,7 @@
         </div>
         <div class="col-12 col-lg-6">
             <label class="form-label" for="inputHousehold">Household</label>
-            <select class="form-control" id="inputHousehold" name="household" th:field="*{householdId}" th:errorclass="is-invalid" >
+            <select class="form-control" id="inputHousehold" name="household" th:field="*{householdId}" th:errorclass="is-invalid" disabled>
                 <option th:each="household : ${households}" th:text="${household.name}"
                         th:value="${household.id}"></option>
             </select>
@@ -45,11 +45,9 @@
         </div>
         <input name="ownerId" th:value="*{ownerId}" type="hidden">
         <div class="col-auto col-lg mx-auto">
-            <button class="btn btn-primary d-none" id="submitTransactionCreation" type="submit">Create</button>
+            <button class="btn btn-primary d-none" id="submitTransactionEdit" type="submit">Create</button>
         </div>
     </form>
 </div>
 
-<div th:data-bs-toggle="${households.size() == 0 ? 'tooltip' : ''}" data-bs-placement="top" data-bs-title="No households available" th:fragment="newTransactionFormSubmitButton">
-    <label for="submitTransactionCreation" class="btn btn-success" th:classappend="${households.size() == 0 ? 'disabled' : ''}" tabindex="0">Create</label>
-</div>
+<label for="submitTransactionEdit" class="btn btn-success" tabindex="0" th:fragment="editTransactionFormSubmitButton">Save</label>

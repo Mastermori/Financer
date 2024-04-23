@@ -1,117 +1,137 @@
-<nav class="navbar navbar-expand-lg" th:fragment="navbar (activeTab)">
-    <div class="container-fluid">
-        <button aria-controls="offcanvasNavbar" aria-label="Toggle navigation" class="navbar-toggler"
-                data-bs-target="#offcanvasNavbar"
-                data-bs-toggle="offcanvas" type="button">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div aria-labelledby="offcanvasNavbarLabel" class="offcanvas offcanvas-start" data-bs-hideresize="true"
-             id="offcanvasNavbar"
-             tabindex="-1">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Financer</h5>
-                <button aria-label="Close" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
-                        type="button"></button>
-            </div>
-            <div class="offcanvas-body">
-                <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
-                    <li class="nav-item" th:classappend="${activeTab == 'home' ? 'active-nav-border':''}">
-                        <a class="nav-link"
-                           th:aria-current="${activeTab == 'home' ? 'page' : ''}"
-                           th:classappend="${activeTab == 'home' ? 'active':''}"
-                           th:href="@{/}">Home</a>
-                    </li>
-                    <li class="nav-item" th:classappend="${activeTab == 'dashboard' ? 'active-nav-border':''}" sec:authorize="isAuthenticated()">
-                        <a class="nav-link"
-                           th:aria-current="${activeTab == 'dashboard' ? 'page' : ''}"
-                           th:classappend="${activeTab == 'dashboard' ? 'active':''}"
-                           th:href="@{/dashboard}">Dashboard</a>
-                    </li>
-                    <li class="nav-item dropdown" th:classappend="${activeTab == 'household' ? 'active-nav-border':''}" sec:authorize="isAuthenticated()">
-                        <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
-                           th:aria-current="${activeTab == 'household' ? 'page' : ''}"
-                           th:classappend="${activeTab == 'household' ? 'active':''}"
-                           role="button">
-                            Households
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li th:each="household: ${currentUser?.participatingHouseholds}"><a class="dropdown-item" th:href="@{/households/{id}(id=${household.id})}" th:text="${household.name}"></a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" th:href="@{/households/new}">New Household</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul class="navbar-nav justify-content-end">
-                    <li class="nav-item dropstart" sec:authorize="isAuthenticated()">
-                        <a aria-expanded="false" class="btn btn-secondary rounded-circle" data-bs-toggle="dropdown"
-                           href="#"
-                           id="profileButton" role="button">
-                            <i class="fa-regular fa-user" id="profileButtonIcon"></i>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
-                        </ul>
-                    </li>
-                    <li sec:authorize="isAnonymous()" class="nav-item">
-                        <a class="btn btn-primary rounded-circle h-100" th:href="@{/login}">
-                            <i class="fa-solid fa-right-to-bracket"></i>
-                        </a>
-                    </li>
-                    <div class="vr d-none d-lg-flex h-100 mx-lg-2 text-white"></div>
-                    <li class="nav-item btn btn-secondary" id="themeToggleButton">
-                        <i class="fa-solid fa-circle-half-stroke fa-flip-horizontal"
-                           id="themeToggleDisplayIcon"></i>
-                    </li>
-                </ul>
+<div th:fragment="navbar (activeTab)">
+    <div class="modal fade" id="householdCreationModal" tabindex="-1" aria-labelledby="householdCreationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="householdCreationModalLabel">Create household</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div th:replace="~{fragments/create-household-fragment.html :: newHouseholdForm (newHousehold = ${newHousehold}, possibleParticipants = ${otherUsers}, isModal = true)}"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" tabindex="1">Close</button>
+<!--                    <button type="submit" class="btn btn-success">Create</button>-->
+                    <label th:replace="~{fragments/create-household-fragment.html :: newHouseholdFormSubmitButton}"></label>
+                </div>
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-        function getCookie(cname) {
-          let name = cname + "=";
-          let decodedCookie = decodeURIComponent(document.cookie);
-          let ca = decodedCookie.split(';');
-          for(let i = 0; i <ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') {
-              c = c.substring(1);
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <button aria-controls="offcanvasNavbar" aria-label="Toggle navigation" class="navbar-toggler"
+                    data-bs-target="#offcanvasNavbar"
+                    data-bs-toggle="offcanvas" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div aria-labelledby="offcanvasNavbarLabel" class="offcanvas offcanvas-start" data-bs-hideresize="true"
+                 id="offcanvasNavbar"
+                 tabindex="-1">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Financer</h5>
+                    <button aria-label="Close" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                            type="button"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
+                        <li class="nav-item" th:classappend="${activeTab == 'home' ? 'active-nav-border':''}">
+                            <a class="nav-link"
+                               th:aria-current="${activeTab == 'home' ? 'page' : ''}"
+                               th:classappend="${activeTab == 'home' ? 'active':''}"
+                               th:href="@{/}">Home</a>
+                        </li>
+                        <li class="nav-item" th:classappend="${activeTab == 'dashboard' ? 'active-nav-border':''}" sec:authorize="isAuthenticated()">
+                            <a class="nav-link"
+                               th:aria-current="${activeTab == 'dashboard' ? 'page' : ''}"
+                               th:classappend="${activeTab == 'dashboard' ? 'active':''}"
+                               th:href="@{/dashboard}">Dashboard</a>
+                        </li>
+                        <li class="nav-item dropdown" th:classappend="${activeTab == 'household' ? 'active-nav-border':''}" sec:authorize="isAuthenticated()">
+                            <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                               th:aria-current="${activeTab == 'household' ? 'page' : ''}"
+                               th:classappend="${activeTab == 'household' ? 'active':''}"
+                               role="button">
+                                Households
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li th:each="household: ${currentUser?.participatingHouseholds}"><a class="dropdown-item" th:href="@{/households/{id}(id=${household.id})}" th:text="${household.name}"></a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><b class="dropdown-item" data-bs-toggle="modal" data-bs-target="#householdCreationModal">New Household</b></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav justify-content-end">
+                        <li class="nav-item dropstart" sec:authorize="isAuthenticated()">
+                            <a aria-expanded="false" class="btn btn-secondary rounded-circle" data-bs-toggle="dropdown"
+                               href="#"
+                               id="profileButton" role="button">
+                                <i class="fa-regular fa-user" id="profileButtonIcon"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+                            </ul>
+                        </li>
+                        <li sec:authorize="isAnonymous()" class="nav-item">
+                            <a class="btn btn-primary rounded-circle h-100" th:href="@{/login}">
+                                <i class="fa-solid fa-right-to-bracket"></i>
+                            </a>
+                        </li>
+                        <div class="vr d-none d-lg-flex h-100 mx-lg-2 text-white"></div>
+                        <li class="nav-item btn btn-secondary" id="themeToggleButton">
+                            <i class="fa-solid fa-circle-half-stroke fa-flip-horizontal"
+                               id="themeToggleDisplayIcon"></i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            function getCookie(cname) {
+              let name = cname + "=";
+              let decodedCookie = decodeURIComponent(document.cookie);
+              let ca = decodedCookie.split(';');
+              for(let i = 0; i <ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                  c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                  return c.substring(name.length, c.length);
+                }
+              }
+              return "";
             }
-            if (c.indexOf(name) == 0) {
-              return c.substring(name.length, c.length);
+            function setCookie(cname, cvalue, exdays) {
+              const d = new Date();
+              d.setTime(d.getTime() + (exdays*24*60*60*1000));
+              let expires = "expires="+ d.toUTCString();
+              document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
             }
-          }
-          return "";
-        }
-        function setCookie(cname, cvalue, exdays) {
-          const d = new Date();
-          d.setTime(d.getTime() + (exdays*24*60*60*1000));
-          let expires = "expires="+ d.toUTCString();
-          document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-        }
-        function setTheme(darkTheme) {
-            document.documentElement.setAttribute("data-bs-theme", darkTheme ? "dark" : "");
-            setCookie("theme", darkTheme ? "dark" : "light", 5);
-            var icon = $('#themeToggleDisplayIcon')[0];
-            icon.classList.remove("fa-flip-horizontal");
-            if (darkTheme) {
-                icon.classList.add("fa-flip-horizontal");
+            function setTheme(darkTheme) {
+                document.documentElement.setAttribute("data-bs-theme", darkTheme ? "dark" : "");
+                setCookie("theme", darkTheme ? "dark" : "light", 5);
+                var icon = $('#themeToggleDisplayIcon')[0];
+                icon.classList.remove("fa-flip-horizontal");
+                if (darkTheme) {
+                    icon.classList.add("fa-flip-horizontal");
+                }
             }
-        }
-        var darkTheme = false;
-        darkTheme = getCookie("theme") == "dark";
-        setTheme(darkTheme);
-        $(document).ready( function() {
-            $('#themeToggleButton').click(function(){
-                darkTheme = !darkTheme;
-                setTheme(darkTheme);
+            var darkTheme = false;
+            darkTheme = getCookie("theme") == "dark";
+            setTheme(darkTheme);
+            $(document).ready( function() {
+                $('#themeToggleButton').click(function(){
+                    darkTheme = !darkTheme;
+                    setTheme(darkTheme);
+                });
             });
-        });
-    </script>
-</nav>
+        </script>
+    </nav>
+</div>

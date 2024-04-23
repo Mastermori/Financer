@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,20 +55,23 @@ public class DashboardController {
         Set<Household> households = currentUser.getParticipatingHouseholds();
         Household household = households.isEmpty() ? new Household().setId(-1L).setName("No Household") : households.iterator().next();
         Category selectedCategory = household.getId() == -1 ? new Category().setDescription("No categories") : household.getCategories().iterator().next();
-        Set<FUser> possiblePayers = household.getId() == -1 ? new HashSet<>() : household.getParticipants();
 
         model.addAttribute("newTransaction",
                 TransactionDTO.fromEntities(newTransaction, currentUser, currentUser, selectedCategory, household));
-        model.addAttribute("categories", household.getCategories());
-        model.addAttribute("households", households);
-        model.addAttribute("possiblePayers", possiblePayers);
         attachModelAttributes(model, filteredTransactions);
         model.addAttribute("selectedHouseholdId", householdId);
         return "dashboard";
     }
 
+    @PostMapping("/delete/{id}")
+    public String deleteTransaction(Model model, @PathVariable(name = "id") String idString) {
+        Long id = Long.parseLong(idString);
+        transactionService.removeTransactionById(id);
+        return "redirect:/dashboard";
+    }
+
     @PostMapping
-    public String createTransaction(Model model, @Valid @ModelAttribute(name = "newTransaction") TransactionDTO newTransactionDTO, BindingResult bindingResult, @ModelAttribute HashSet<Category> categories, @ModelAttribute HashSet<Household> households, @ModelAttribute HashSet<FUser> possiblePayers) {
+    public String createTransaction(Model model, @Valid @ModelAttribute(name = "newTransaction") TransactionDTO newTransactionDTO, BindingResult bindingResult) {
         if (!bindingResult.hasFieldErrors("householdId") && !householdService.householdExists(newTransactionDTO.getHouseholdId())) {
             bindingResult.rejectValue("householdId", "household.id.missing", "could not find that household. Try refreshing");
         }
@@ -80,7 +84,7 @@ public class DashboardController {
         if (!bindingResult.hasFieldErrors("categoryId") && !categoryService.categoryExists(newTransactionDTO.getCategoryId())) {
             bindingResult.rejectValue("categoryId", "category.id.missing", "could not find that category. Try refreshing");
         }
-        if(newTransactionDTO.getAmount() == 0) {
+        if (newTransactionDTO.getAmount() == 0) {
             bindingResult.rejectValue("amount", "amount.zero", "cannot be zero");
         }
         if (bindingResult.hasErrors()) {
@@ -107,6 +111,14 @@ public class DashboardController {
     }
 
     private void attachModelAttributes(Model model, List<Transaction> transactions) {
+        FUser currentUser = userService.getAuthenticatedUser();
+        Set<Household> households = currentUser.getParticipatingHouseholds();
+        Household household = households.isEmpty() ? null : households.iterator().next();
+        Set<FUser> possiblePayers = household == null ? new HashSet<>() : household.getParticipants();
+
+        model.addAttribute("categories", household != null ? household.getCategories() : new HashSet<>());
+        model.addAttribute("households", households);
+        model.addAttribute("possiblePayers", possiblePayers);
         model.addAttribute("zeitstempel", LocalDateTime.now().plusHours(10));
         model.addAttribute("transactions", transactions);
     }
