@@ -4,14 +4,29 @@
             <i class="fa-solid fa-circle-exclamation"></i>
             You have no households, please create one first.
         </div>
-        <div class="col-12 col-lg-3">
+        <div class="col-12 col-lg-4">
             <label class="form-label" for="inputAmount">Amount</label>
             <input class="form-control" id="inputAmount" name="amount"  th:field="*{amount}" th:errorclass="is-invalid"  type="text">
             <p class="text-danger" th:errors="*{amount}"></p>
         </div>
-        <div class="col-12 col-lg-9">
+        <div class="col-12 col-lg-4">
+            <label class="form-label" for="inputCategory">Category</label>
+            <select class="form-control" id="inputCategory" name="category" th:field="*{categoryId}" th:errorclass="is-invalid" >
+                <option th:each="category : ${categories}" th:text="${category.description}"
+                        th:value="${category.id}"></option>
+            </select>
+            <p class="text-danger" th:errors="*{categoryId}"></p>
+        </div>
+        <div class="col-12 col-lg-4">
+            <label class="form-label" for="inputPayer">Payer</label>
+            <select class="form-control" id="inputPayer" name="payer" th:field="*{payerId}" th:errorclass="is-invalid" >
+                <option th:each="payer : ${possiblePayers}" th:text="${payer.name}" th:value="${payer.id}"></option>
+            </select>
+            <p class="text-danger" th:errors="*{payerId}"></p>
+        </div>
+        <div class="col-12 col-lg-12">
             <label class="form-label" for="inputDescription">Description</label>
-            <input class="form-control" id="inputDescription" name="description" th:field="*{description}" th:errorclass="is-invalid"  type="text">
+            <input class="form-control" id="inputDescription" name="description" placeholder="Apples, bread, ..." th:field="*{description}" th:errorclass="is-invalid"  type="text">
             <p class="text-danger" th:errors="*{description}"></p>
         </div>
         <div class="col-12 col-lg-6">
@@ -21,14 +36,6 @@
             <p class="text-danger" th:errors="*{transactionDate}"></p>
         </div>
         <div class="col-12 col-lg-6">
-            <label class="form-label" for="inputCategory">Category</label>
-            <select class="form-control" id="inputCategory" name="category" th:field="*{categoryId}" th:errorclass="is-invalid" >
-                <option th:each="category : ${categories}" th:text="${category.description}"
-                        th:value="${category.id}"></option>
-            </select>
-            <p class="text-danger" th:errors="*{categoryId}"></p>
-        </div>
-        <div class="col-12 col-lg-6">
             <label class="form-label" for="inputHousehold">Household</label>
             <select class="form-control" id="inputHousehold" name="household" th:field="*{householdId}" th:errorclass="is-invalid" >
                 <option th:each="household : ${households}" th:text="${household.name}"
@@ -36,18 +43,36 @@
             </select>
             <p class="text-danger" th:errors="*{householdId}"></p>
         </div>
-        <div class="col-12 col-lg-6">
-            <label class="form-label" for="inputPayer">Payer</label>
-            <select class="form-control" id="inputPayer" name="payer" th:field="*{payerId}" th:errorclass="is-invalid" >
-                <option th:each="payer : ${possiblePayers}" th:text="${payer.name}" th:value="${payer.id}"></option>
-            </select>
-            <p class="text-danger" th:errors="*{payerId}"></p>
-        </div>
         <input name="ownerId" th:value="*{ownerId}" type="hidden">
         <div class="col-auto col-lg mx-auto">
             <button class="btn btn-primary d-none" id="submitTransactionCreation" type="submit">Create</button>
         </div>
     </form>
+    <script type="text/javascript" th:inline="javascript">
+        const households = /*[[${households}]]*/ [];
+        function updatePayersFor (householdId) {
+
+            let foundHousehold = households.find((value) => value.id === householdId);
+            $('#inputPayer option').each(function (index) {
+                let userId = parseInt(this.value);
+                let disabled = !foundHousehold.participantIds.includes(userId);
+                if ($(this).prop('selected') === true && disabled) {
+                    $(this).prop('selected', false)
+                }
+                $(this).prop('disabled', disabled);
+            });
+        }
+
+        $(document).ready(function () {
+            let householdId = parseInt($('#inputHousehold').val());
+            updatePayersFor(householdId);
+        });
+
+        $('#inputHousehold').on('change', function () {
+            let householdId = parseInt(this.value);
+            updatePayersFor(householdId);
+        });
+    </script>
 </div>
 
 <div th:data-bs-toggle="${households.size() == 0 ? 'tooltip' : ''}" data-bs-placement="top" data-bs-title="No households available" th:fragment="newTransactionFormSubmitButton">
