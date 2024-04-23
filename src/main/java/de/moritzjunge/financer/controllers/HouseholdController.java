@@ -94,6 +94,13 @@ public class HouseholdController {
         if (householdOptional.isEmpty())
             return "redirect:dashboard";
         model.addAttribute("household", householdOptional.get());
+        addModelAttributes(model);
         return "household";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String editHousehold(Model model, @PathVariable Long id, @ModelAttribute List<Long> participantIds) {
+
+        return "redirect:households/" + id;
     }
 }
