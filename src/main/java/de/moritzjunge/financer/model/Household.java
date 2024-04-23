@@ -15,6 +15,8 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Entity
 public class Household {
@@ -32,7 +34,7 @@ public class Household {
     @JoinTable(name = "householdParticipant", joinColumns = @JoinColumn(name = "householdId"), inverseJoinColumns = @JoinColumn(name = "usersId"))
     private Set<FUser> participants = new HashSet<>();
     @OneToMany(mappedBy = "household")
-    private Set<Category> categories = new HashSet<>();
+    private SortedSet<Category> categories = new TreeSet<>();
     @OneToMany(mappedBy = "household")
     private Set<Transaction> transactions = new HashSet<>();
 
