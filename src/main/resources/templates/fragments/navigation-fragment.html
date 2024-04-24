@@ -1,5 +1,5 @@
 <div th:fragment="navbar (activeTab)">
-    <div class="modal fade" id="householdCreationModal" tabindex="-1" aria-labelledby="householdCreationModalLabel" aria-hidden="true">
+    <div sec:authorize="isAuthenticated()" th:if="${newHousehold != null}" class="modal fade" id="householdCreationModal" tabindex="-1" aria-labelledby="householdCreationModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -58,7 +58,8 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><b class="dropdown-item" data-bs-toggle="modal" data-bs-target="#householdCreationModal">New Household</b></li>
+                                <li th:if="${newHousehold == null}"><a class="dropdown-item" th:href="@{/households/new}">New Household</a></li>
+                                <li th:if="${newHousehold != null}"><b class="dropdown-item" data-bs-toggle="modal" data-bs-target="#householdCreationModal">New Household</b></li>
                             </ul>
                         </li>
                     </ul>

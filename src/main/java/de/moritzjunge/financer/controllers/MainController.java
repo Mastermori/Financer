@@ -3,6 +3,7 @@ package de.moritzjunge.financer.controllers;
 import de.moritzjunge.financer.model.FUser;
 import de.moritzjunge.financer.model.dtos.UserDTO;
 import de.moritzjunge.financer.services.UserService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,9 +12,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-//@RequestMapping("/")
+@RequestMapping("/")
+@Transactional
 public class MainController {
 
 //    @GetMapping
@@ -23,6 +26,11 @@ public class MainController {
 
     @Autowired
     private UserService userService;
+
+    @GetMapping
+    public String getHome(Model model) {
+        return "index";
+    }
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
