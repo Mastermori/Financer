@@ -46,7 +46,7 @@ public class DashboardController {
 
     @GetMapping
     public String getDashboard(Model model, @RequestParam(required = false, defaultValue = "") String householdId, @RequestParam(required = false, defaultValue = "") String editTransactionId) {
-        List<Transaction> filteredTransactions = transactionService.getTransactions();
+        List<Transaction> filteredTransactions = userService.getAuthenticatedUser().getParticipatingHouseholds().stream().map(Household::getTransactions).flatMap(Set::stream).toList();
         if (!householdId.isEmpty()) {
             filteredTransactions = filteredTransactions.stream().filter(household -> household.getId().equals(Long.parseLong(householdId))).toList();
         }

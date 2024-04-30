@@ -1,5 +1,6 @@
 package de.moritzjunge.financer.model.dtos;
 
+import de.moritzjunge.financer.model.FUser;
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -12,6 +13,13 @@ public class UserDTO {
     private String email;
     @NotEmpty(message = "Please enter a password")
     private String password;
+
+    public static UserDTO fromEntities(FUser user) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName(user.getName());
+        userDTO.setEmail(user.getEmail());
+        return userDTO;
+    }
 
     public String getName() {
         return name;

@@ -11,8 +11,8 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -46,6 +46,15 @@ public class Household {
     public void removeParticipant(FUser user) {
         participants.remove(user);
         user.getParticipatingHouseholds().remove(this);
+    }
+
+    public void clearParticipants() {
+        for (FUser user : new ArrayList<>(getParticipants())) {
+            if (user.getId().equals(owner.getId())) {
+                continue;
+            }
+            removeParticipant(user);
+        }
     }
 
     public void addCategory(Category category) {

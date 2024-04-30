@@ -90,17 +90,32 @@ public class HouseholdController {
 
     @GetMapping("/{id}")
     public String getHousehold(Model model, @PathVariable Long id) {
+        FUser currentUser = userService.getAuthenticatedUser();
         Optional<Household> householdOptional = householdService.getHouseholdById(id);
         if (householdOptional.isEmpty())
-            return "redirect:dashboard";
-        model.addAttribute("household", householdOptional.get());
+            return "redirect:/dashboard";
+        Household household = householdOptional.get();
+        if (!household.getParticipants().contains(currentUser)) {
+            return "redirect:/dashboard";
+        }
+        model.addAttribute("household", household);
+        model.addAttribute("householdDTO", HouseholdDTO.fromEntities(household));
         addModelAttributes(model);
         return "household";
     }
 
     @PostMapping("/{id}/edit")
-    public String editHousehold(Model model, @PathVariable Long id, @ModelAttribute List<Long> participantIds) {
-
-        return "redirect:households/" + id;
+    public String editHousehold(Model model, @PathVariable Long id, @ModelAttribute HouseholdDTO householdDTO) {
+        System.out.println(householdDTO.getParticipantIds());
+        List<FUser> editedParticipants = householdDTO.getParticipantIds().stream().map(userId -> userService.getUserById(userId).orElseThrow()).toList();
+        Household household = householdService.getHouseholdById(id).orElseThrow();
+        FUser currentUser = userService.getAuthenticatedUser();
+        if (!household.getParticipants().contains(currentUser)) {
+            return "redirect:/dashboard";
+        }
+        household.clearParticipants();
+        editedParticipants.forEach(household::addParticipant);
+        household.addParticipant(currentUser);
+        return "redirect:/households/" + id;
     }
 }

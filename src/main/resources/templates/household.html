@@ -21,10 +21,10 @@
     <li th:each="category: ${household.categories}" th:text="${category.description}"></li>
 </ul>
 <h4>Participants:</h4>
-<form method="POST" th:action="@{/households/{id}/edit(id = ${household.id})}">
+<form method="POST" th:action="@{/households/{id}/edit(id = ${household.id})}" th:object="${householdDTO}">
     <div class="col-12">
         <label class="form-label" for="inputParticipantsH">Participants</label>
-        <select class="form-control" id="inputParticipantsH" multiple name="participantIds">
+        <select class="form-control" id="inputParticipantsH" multiple name="participantIds" th:field="*{participantIds}">
             <option th:each="participant : ${possibleParticipants}"
                     th:text="${participant.name}" th:value="${participant.id}"></option>
         </select>
