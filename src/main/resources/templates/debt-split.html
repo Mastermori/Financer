@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout}">
+<head>
+    <title th:text="${household.name}"></title>
+    <link rel="stylesheet" th:href="@{/css/generated/custom-choices.css}">
+    <!--    <link-->
+    <!--            href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"-->
+    <!--            rel="stylesheet"-->
+    <!--    />-->
+</head>
+<div layout:fragment="navbar">
+    <div th:replace="~{fragments/navigation-fragment.html :: navbar (activeTab = household)}"></div>
+</div>
+<body layout:fragment="content">
+
+<h3 th:text="|Debt Split for ${household.name}|"></h3>
+
+<p th:text="|A total of ${#numbers.formatDecimal(totalSpendings / 100.0, 0, 'POINT', 2, 'COMMA')}€ was spent through ${transactionAmount} transactions in the given timeframe.|"></p>
+
+<h4>Spendings:</h4>
+<ul>
+    <li th:each="spending : ${userSpendings.entrySet()}" th:text="|${spending.getKey().name} spent ${#numbers.formatDecimal(spending.getValue() / 100.0, 0, 'POINT', 2, 'COMMA')}€|"></li>
+</ul>
+
+<h4>Resolution:</h4>
+<ul>
+    <li th:each="debt : ${debts}" th:text="|${debt.debtor.name} owes ${debt.creditor.name} ${#numbers.formatDecimal(debt.amount / 100.0, 0, 'POINT', 2, 'COMMA')}€|"></li>
+</ul>
+
+</body>
+</html>

@@ -23,7 +23,7 @@ public class HouseholdTest {
     private void testTwoUsers(List<Transaction> transactions, int expectedDeviation) {
         Household household = new Household();
         transactions.forEach(household::addTransaction);
-        List<Debt> debts = household.calculateDebtForTimeframe(date, date);
+        List<Debt> debts = household.calculateDebtForTimeframe(date, date).getDebts();
         assertEquals(1, debts.size(), "Too many debts created for simple scenario");
         assertEquals(expectedDeviation, debts.get(0).getAmount(), "Too many debts created for simple scenario");
         assertEquals(user1, debts.get(0).getDebtor(), "Wrong debtor");
@@ -76,7 +76,7 @@ public class HouseholdTest {
         );
         Household household = new Household();
         transactions.forEach(household::addTransaction);
-        List<Debt> debts = household.calculateDebtForTimeframe(date, date);
+        List<Debt> debts = household.calculateDebtForTimeframe(date, date).getDebts();
         Optional<Debt> user1Debt = debts.stream().filter(debt -> debt.getDebtor().equals(user1)).findFirst();
         Optional<Debt> user1Credit = debts.stream().filter(debt -> debt.getCreditor().equals(user1)).findFirst();
         Optional<Debt> user2Debt = debts.stream().filter(debt -> debt.getDebtor().equals(user2)).findFirst();
@@ -91,6 +91,32 @@ public class HouseholdTest {
         assertEquals(user3, user1Debt.get().getCreditor());
         assertEquals(200, user2Debt.get().getAmount());
         assertEquals(user3, user2Debt.get().getCreditor());
+    }
+
+    @Test
+    public void testDebtDistributionThreeUsers2() {
+        FUser user3 = new FUser().setName("User3");
+        List<Transaction> transactions = List.of(
+                new Transaction().setTransactionDate(date).setAmount(500).setPayer(user1).setId(1L),
+                new Transaction().setTransactionDate(date).setAmount(100).setPayer(user2).setId(2L),
+                new Transaction().setTransactionDate(date).setAmount(300).setPayer(user3).setId(3L)
+        );
+        Household household = new Household();
+        transactions.forEach(household::addTransaction);
+        List<Debt> debts = household.calculateDebtForTimeframe(date, date).getDebts();
+        Optional<Debt> user1Debt = debts.stream().filter(debt -> debt.getDebtor().equals(user1)).findFirst();
+        Optional<Debt> user1Credit = debts.stream().filter(debt -> debt.getCreditor().equals(user1)).findFirst();
+        Optional<Debt> user2Debt = debts.stream().filter(debt -> debt.getDebtor().equals(user2)).findFirst();
+        Optional<Debt> user2Credit = debts.stream().filter(debt -> debt.getCreditor().equals(user2)).findFirst();
+        Optional<Debt> user3Debt = debts.stream().filter(debt -> debt.getDebtor().equals(user3)).findFirst();
+        System.out.println(debts);
+        assertEquals(false, user1Debt.isPresent(), "Debt is not correctly created for user1");
+        assertEquals(true, user1Credit.isPresent(), "Credit is falsely created for user1");
+        assertEquals(true, user2Debt.isPresent(), "Debt is not correctly created for user2");
+        assertEquals(false, user2Credit.isPresent(), "Credit is falsely created for user2");
+        assertEquals(false, user3Debt.isPresent(), "Debt is falsely created for user3");
+        assertEquals(200, user2Debt.get().getAmount());
+        assertEquals(user1, user2Debt.get().getCreditor());
     }
 
 }

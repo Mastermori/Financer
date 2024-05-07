@@ -1,6 +1,7 @@
 package de.moritzjunge.financer.model;
 
 import de.moritzjunge.financer.model.dtos.Debt;
+import de.moritzjunge.financer.model.dtos.DebtContext;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,12 +37,14 @@ public class Household {
     @OneToMany(mappedBy = "household")
     private Set<Transaction> transactions = new HashSet<>();
 
-    public List<Debt> calculateDebtForTimeframe(LocalDate startDate, LocalDate endDate) {
+    public DebtContext calculateDebtForTimeframe(LocalDate startDate, LocalDate endDate) {
         List<Debt> debts = new ArrayList<>();
         HashMap<FUser, Integer> spendings = new HashMap<>();
+        int transactionCount = 0;
         for (Transaction transaction : transactions) {
             if (transaction.getTransactionDate().isBefore(startDate) || transaction.getTransactionDate().isAfter(endDate))
                 continue;
+            transactionCount++;
             spendings.merge(transaction.getPayer(), transaction.getAmount(), Integer::sum);
         }
         double userWeight = 1.0 / spendings.keySet().size();
@@ -52,7 +55,7 @@ public class Household {
             double amountOwed = totalSpendings * userWeight - spending.getValue();
             if (amountOwed > 0) {
                 userDebt.put(spending.getKey(), (int) amountOwed);
-            } else {
+            } else if (amountOwed < 0) {
                 userCredit.put(spending.getKey(), (int) -amountOwed);
             }
         }
@@ -68,7 +71,7 @@ public class Household {
                 debts.add(new Debt(debt.getKey(), credit.getKey(), owedAmount));
             }
         }
-        return debts;
+        return new DebtContext(debts, spendings, totalSpendings, transactionCount);
     }
 
     public void addTransaction(Transaction transaction) {

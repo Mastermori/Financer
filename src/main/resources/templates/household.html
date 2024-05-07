@@ -76,6 +76,9 @@
         </div>
     </fieldset>
 </form>
+
+<h4>Debt Splitting:</h4>
+<a th:href="@{/households/{id}/debt?startDate=1900-01-01&endDate=2100-01-01 (id = ${household.id})}">Go</a>
 <!--<ul>-->
 <!--    <li th:each="participant: ${household.participants}" th:text="${participant.name}"></li>-->
 <!--</ul>-->

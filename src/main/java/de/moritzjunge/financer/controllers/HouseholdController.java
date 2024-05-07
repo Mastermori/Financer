@@ -4,6 +4,7 @@ import de.moritzjunge.financer.model.Category;
 import de.moritzjunge.financer.model.FUser;
 import de.moritzjunge.financer.model.Household;
 import de.moritzjunge.financer.model.dtos.CategoryDTO;
+import de.moritzjunge.financer.model.dtos.DebtContext;
 import de.moritzjunge.financer.model.dtos.HouseholdDTO;
 import de.moritzjunge.financer.services.CategoryService;
 import de.moritzjunge.financer.services.HouseholdService;
@@ -13,14 +14,10 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import java.awt.Color;
+import java.awt.*;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -162,4 +159,26 @@ public class HouseholdController {
         household.addCategory(newCategory);
         return "redirect:/households/" + id;
     }
+
+    @GetMapping("/{id}/debt")
+    public String debtSplitting(Model model, @PathVariable Long id, @RequestParam(name = "startDate") String startDateString, @RequestParam(name = "endDate") String endDateString) {
+        FUser currentUser = userService.getAuthenticatedUser();
+        Optional<Household> householdOptional = householdService.getHouseholdById(id);
+        if (householdOptional.isEmpty())
+            return "redirect:/dashboard";
+        Household household = householdOptional.get();
+        if (!household.getParticipants().contains(currentUser)) {
+            return "redirect:/dashboard";
+        }
+        LocalDate startDate = LocalDate.parse(startDateString);
+        LocalDate endDate = LocalDate.parse(endDateString);
+        DebtContext debtContext = household.calculateDebtForTimeframe(startDate, endDate);
+        model.addAttribute("household", household);
+        model.addAttribute("totalSpendings", debtContext.getTotalSpendings());
+        model.addAttribute("transactionAmount", debtContext.getTransactionAmount());
+        model.addAttribute("userSpendings", debtContext.getUserSpendings());
+        model.addAttribute("debts", debtContext.getDebts());
+        return "debt-split";
+    }
+
 }
