@@ -38,6 +38,9 @@
                     <p class="card-title" th:text="${transaction.getFormattedAmount()}"></p>
                 </div>
             </div>
+            <a class="stretched-link hidden"
+               th:href="@{/dashboard?editTransactionId={id}(id = ${transaction.id})}">
+            </a>
         </div>
         <div class="card-footer text-muted">
             <div class="row">
@@ -78,8 +81,9 @@
             <td>
                 <div class="row">
                     <a class="col-auto btn btn-primary btn-sm"
-                       th:href="@{/dashboard?editTransactionId={id}(id = ${transaction.id})}"><i
-                            class="fa-solid fa-pen"></i></a>
+                       th:href="@{/dashboard?editTransactionId={id}(id = ${transaction.id})}">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
                     <form class="col-auto" th:action="@{/dashboard/delete/{id}(id = ${transaction.id})}" method="POST">
                         <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
                     </form>
