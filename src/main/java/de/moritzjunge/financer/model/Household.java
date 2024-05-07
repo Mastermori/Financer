@@ -14,13 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 @Entity
 public class Household {
@@ -50,10 +44,36 @@ public class Household {
                 continue;
             spendings.merge(transaction.getPayer(), transaction.getAmount(), Integer::sum);
         }
-        int totalSpendings = spendings.values().stream().reduce(Integer::sum).orElse(0);
+        double userWeight = 1.0 / spendings.keySet().size();
+        int totalSpendings = spendings.values().stream().reduce(0, Integer::sum);
         HashMap<FUser, Integer> userDebt = new HashMap<>();
         HashMap<FUser, Integer> userCredit = new HashMap<>();
+        for (var spending : spendings.entrySet()) {
+            double amountOwed = totalSpendings * userWeight - spending.getValue();
+            if (amountOwed > 0) {
+                userDebt.put(spending.getKey(), (int) amountOwed);
+            } else {
+                userCredit.put(spending.getKey(), (int) -amountOwed);
+            }
+        }
+        int creditorCount = userCredit.size();
+        for (var debt : userDebt.entrySet()) {
+            for (var credit : userCredit.entrySet()) {
+                int owedAmount = Math.min(debt.getValue() / creditorCount, credit.getValue());
+                debt.setValue(debt.getValue() - owedAmount);
+                credit.setValue(credit.getValue() - owedAmount);
+                if (credit.getValue() < 1) {
+                    creditorCount--;
+                }
+                debts.add(new Debt(debt.getKey(), credit.getKey(), owedAmount));
+            }
+        }
         return debts;
+    }
+
+    public void addTransaction(Transaction transaction) {
+        transaction.setHousehold(this);
+        transactions.add(transaction);
     }
 
     public void addParticipant(FUser user) {
