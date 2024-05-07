@@ -64,7 +64,6 @@
     <fieldset th:disabled="${household.owner.id == currentUser.id ? 'false' : 'true'}">
         <div class="row g-2">
             <div class="col-12">
-                <label class="form-label" for="inputParticipantsH">Participants</label>
                 <select class="form-control" id="inputParticipantsH" multiple name="participantIds"
                         th:field="*{participantIds}">
                     <option th:each="participant : ${possibleParticipants}"

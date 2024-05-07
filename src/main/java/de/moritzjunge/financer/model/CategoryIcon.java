@@ -2,7 +2,7 @@ package de.moritzjunge.financer.model;
 
 public enum CategoryIcon {
 
-    SHOPPING_CART("fa-cart-shopping");
+    SHOPPING_CART("fa-solid fa-cart-shopping");
 
     final String cssClass;
     CategoryIcon(String cssClass) {
