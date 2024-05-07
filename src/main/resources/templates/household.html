@@ -16,29 +16,72 @@
 
 <h3 th:text="|${household.name}|"></h3>
 <p th:text="|Owned by ${household.owner.name}|"></p>
+
+<a th:href="@{/dashboard?householdId={id}(id = ${household.id})}">Show transactions</a>
 <h4>Categories:</h4>
-<ul>
-    <li th:each="category: ${household.categories}" th:text="${category.description}"></li>
-</ul>
+<div class="container">
+    <div class="row justify-content-md-start" th:each="category: ${household.categories}"
+         th:inert="${household.owner.id == currentUser.id ? '' : 'true'}">
+        <div class="row col-auto rounded-pill border ms-2 mb-1"
+             th:style="|background-color: ${category.getCssColor()}|">
+            <div class="col-auto text-center p-0">
+                <span class="align-middle" th:text="${category.description}"></span>
+            </div>
+            <div class="col-auto p-0">
+                <form th:action="@{/households/{id}/categories/{categoryId}/delete(id=${household.id}, categoryId=${category.id})}"
+                      th:method="post">
+                    <button aria-label="Close" class="btn btn-error" type="submit">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <form th:action="@{/households/{id}/categories/new (id = ${household.id})}"
+          th:inert="${household.owner.id == currentUser.id ? '' : 'true'}" th:method="post"
+          th:object="${newCategoryDTO}">
+        <div class="row mt-2">
+            <div class="col-auto">
+                <!--                <label for="newCategoryDescription"></label>-->
+                <input class="form-control" id="newCategoryDescription" th:errorclass="is-invalid"
+                       th:field="*{description}"
+                       type="text">
+                <p class="text-danger" th:errors="*{description}"></p>
+            </div>
+            <div class="col-auto">
+                <button aria-label="Save" class="btn btn-success" type="submit">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
 <h4>Participants:</h4>
-<form method="POST" th:action="@{/households/{id}/edit(id = ${household.id})}" th:object="${householdDTO}">
-    <div class="col-12">
-        <label class="form-label" for="inputParticipantsH">Participants</label>
-        <select class="form-control" id="inputParticipantsH" multiple name="participantIds" th:field="*{participantIds}">
-            <option th:each="participant : ${possibleParticipants}"
-                    th:text="${participant.name}" th:value="${participant.id}"></option>
-        </select>
-    </div>
-    <div class="col">
-        <button class="btn btn-success" type="submit">Save Changes</button>
-    </div>
+<form method="POST" th:action="@{/households/{id}/edit (id = ${household.id})}"
+      th:inert="${household.owner.id == currentUser.id ? '' : 'true'}"
+      th:object="${householdDTO}">
+    <!--<form method="POST" th:action="@{/households/{id}/edit(id = ${household.id})}" th:object="${householdDTO}">-->
+    <fieldset th:disabled="${household.owner.id == currentUser.id ? 'false' : 'true'}">
+        <div class="row g-2">
+            <div class="col-12">
+                <label class="form-label" for="inputParticipantsH">Participants</label>
+                <select class="form-control" id="inputParticipantsH" multiple name="participantIds"
+                        th:field="*{participantIds}">
+                    <option th:each="participant : ${possibleParticipants}"
+                            th:text="${participant.name}" th:value="${participant.id}"></option>
+                </select>
+            </div>
+            <div class="col">
+                <button class="btn btn-success" type="submit">Save Participants</button>
+            </div>
+        </div>
+    </fieldset>
 </form>
 <!--<ul>-->
 <!--    <li th:each="participant: ${household.participants}" th:text="${participant.name}"></li>-->
 <!--</ul>-->
-<a th:href="@{/dashboard?householdId={id}(id = ${household.id})}">Show transactions</a>
 
-<script type="text/javascript" th:inline="javascript">
+<script th:inline="javascript" type="text/javascript">
     new Choices('#inputParticipantsH', {
         removeItemButton: true,
         allowHTML: false,

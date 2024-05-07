@@ -16,28 +16,9 @@ import java.util.Optional;
 public class HouseholdService {
 
     private final HouseholdRepository householdRepository;
-    private final UserService userService;
 
-    public HouseholdService(HouseholdRepository householdRepository, UserService userService) {
+    public HouseholdService(HouseholdRepository householdRepository) {
         this.householdRepository = householdRepository;
-        this.userService = userService;
-
-//        Category cat1 = new Category().setDescription("Test1 H").setColor(Color.RED);
-//        Category cat2 = new Category().setDescription("Test2 H").setColor(Color.BLUE);
-//
-//        FUser owner = userService.getUserById(1L).get();
-//
-//        Household household = new Household().setName("Test Household").setOwner(owner);
-//
-//        household.addCategory(cat1);
-//        household.addCategory(cat2);
-//
-//        addHousehold(household);
-//
-//        household.addParticipant(owner);
-//
-//        categoryRepository.save(cat1);
-//        categoryRepository.save(cat2);
     }
 
     public Optional<Household> getHouseholdById(Long id) {

@@ -15,12 +15,6 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactions;
 
-//    public TransactionService() {
-//        transactions.save(new Transaction(100, "Putzmittel", LocalDate.now().minusDays(1), LocalDateTime.now()));
-//        transactions.save(new Transaction(250, "Brot und Marmelade", LocalDate.now().minusDays(1), LocalDateTime.now()));
-//        transactions.save(new Transaction(799, "Hummus, Falafel, Wraps", LocalDate.now().minusDays(1), LocalDateTime.now()));
-//    }
-
     public Optional<Transaction> getTransactionById(long id) {
         return transactions.findById(id);
     }

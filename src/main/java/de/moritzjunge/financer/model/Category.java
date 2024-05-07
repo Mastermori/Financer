@@ -20,7 +20,7 @@ public class Category implements Comparable<Category> {
     private String description;
     private CategoryIcon icon = CategoryIcon.SHOPPING_CART;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "householdId", nullable = false)
+    @JoinColumn(name = "householdId")
     private Household household;
 
     // Required by Hibernate

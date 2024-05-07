@@ -1,5 +1,6 @@
 package de.moritzjunge.financer.model;
 
+import de.moritzjunge.financer.model.dtos.Debt;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,8 +13,11 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -37,6 +41,20 @@ public class Household {
     private SortedSet<Category> categories = new TreeSet<>();
     @OneToMany(mappedBy = "household")
     private Set<Transaction> transactions = new HashSet<>();
+
+    public List<Debt> calculateDebtForTimeframe(LocalDate startDate, LocalDate endDate) {
+        List<Debt> debts = new ArrayList<>();
+        HashMap<FUser, Integer> spendings = new HashMap<>();
+        for (Transaction transaction : transactions) {
+            if (transaction.getTransactionDate().isBefore(startDate) || transaction.getTransactionDate().isAfter(endDate))
+                continue;
+            spendings.merge(transaction.getPayer(), transaction.getAmount(), Integer::sum);
+        }
+        int totalSpendings = spendings.values().stream().reduce(Integer::sum).orElse(0);
+        HashMap<FUser, Integer> userDebt = new HashMap<>();
+        HashMap<FUser, Integer> userCredit = new HashMap<>();
+        return debts;
+    }
 
     public void addParticipant(FUser user) {
         participants.add(user);
